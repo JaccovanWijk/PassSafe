@@ -8,6 +8,6 @@ If you can store your passwords in a secure app, which is also able to generate 
 
 ### Main Features
 * Login
-* ```Find password```
+* **Find password**
 * Generate a new password
 
