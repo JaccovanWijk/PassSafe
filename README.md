@@ -1,6 +1,6 @@
-# PassSave
+# PassSafe
 ### Summary
-
+This app will be able to store your passwords for all of your accounts. It'll also be able to generate random passwords.
 ### Author
 * Jacco van Wijk
 ## Problem
