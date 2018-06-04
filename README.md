@@ -11,3 +11,10 @@ If you can store your passwords in a secure app, which is also able to generate 
 * **Find password**
 * Generate a new password
 
+## Prerequisites
+### Data Source
+I’m still looking for an API that’ll return a random personal question like “what was your first pets name”.
+### External Components
+I’ll be using Firebase to store all passwords.
+### Hardest Part
+The hardest part will probably be the encrypting. I’d like to experiment with this and make it as secure as possible with the available recourses.
