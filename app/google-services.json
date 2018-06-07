@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "241849671694",
+    "firebase_url": "https://passsafe-1547e.firebaseio.com",
+    "project_id": "passsafe-1547e",
+    "storage_bucket": "passsafe-1547e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241849671694:android:d0c7dcfc32d2f8b4",
+        "android_client_info": {
+          "package_name": "com.example.jacco.passsave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "241849671694-ibf7hmogovmvmmki4f4pou9ca7ef1pt1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jacco.passsave",
+            "certificate_hash": "60ca58fb9dfaef19f02161da424b08e5db2037d2"
+          }
+        },
+        {
+          "client_id": "241849671694-pjpmqpo17a0pmd6megdsbbrstgvp06r5.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "241849671694-pjpmqpo17a0pmd6megdsbbrstgvp06r5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMju6fSBsvweb-gKlqNkDzJRw5LwFwWxM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "241849671694-pjpmqpo17a0pmd6megdsbbrstgvp06r5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
