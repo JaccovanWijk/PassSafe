@@ -6,6 +6,8 @@
 ## APIs
 * Firebase for storing the encrypted passwords.
 ## Datasources
-* [AES encryption](https://aesencryption.net/)
-* [Base64](https://gist.github.com/EmilHernvall/953733)
+* [AES encryption](https://aesencryption.net/);
+* [Base64](https://gist.github.com/EmilHernvall/953733).
+
+
 Please look at **README.md** for more details.
