@@ -8,7 +8,7 @@ Forgetting a password is something that happens to everyone. This creates the id
 ## Solution
 If you can store your passwords in a secure app, which is also able to generate random passwords, you’ll never have the problem of losing a password again. Your passwords are harder to crack as well.
 
-![alt text](https://github.com/JaccovanWijk/PassSave/blob/master/PassSaveInfo/screens-proposal-app.png)
+![alt text](https://github.com/JaccovanWijk/PassSave/blob/master/doc/screens-proposal-app.png)
 
 ### Main Features
 * Login
