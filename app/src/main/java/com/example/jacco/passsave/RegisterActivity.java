@@ -1,5 +1,6 @@
 package com.example.jacco.passsave;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.FileOutputStream;
+
 public class RegisterActivity extends AppCompatActivity {
 
     public int[] ids = {R.id.username, R.id.password1, R.id.password2};
@@ -30,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
+
     }
 
     public void registerClicked(View view) {
@@ -52,12 +56,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
         else {
             // TODO ENCRYPT THE PASSWORD
-
-            // upload username
-//            DatabaseReference database = FirebaseDatabase.getInstance().getReference(username);
-//            DatabaseReference ref = database.push();
-//            ref.setValue(password1);
-
             createUser();
         }
     }
@@ -71,26 +69,33 @@ public class RegisterActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("Created", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            storePassword();
+
                             Intent intent = new Intent(RegisterActivity.this, QuestionActivity.class);
-                            intent.putExtra("username", username);
                             intent.putExtra("boolean", false);
                             startActivity(intent);
-//                                updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Not created", "createUserWithEmail:failure", task.getException());
                             Toast.makeText(RegisterActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-//                                updateUI(null);
                         }
-
-                        // ...
                     }
                 });
+    }
 
-//        Intent intent = new Intent(RegisterActivity.this, QuestionActivity.class);
-//        intent.putExtra("username", username);
-//        intent.putExtra("boolean", false);
-//        startActivity(intent);
+    public void storePassword() {
+        String filename = "StorePass";
+        String fileContents = username + "\n" + AES.encrypt(password1, "randomKey"); //TODO HASH PASSWORD better
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(fileContents.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

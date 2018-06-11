@@ -3,12 +3,18 @@ package com.example.jacco.passsave;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.io.FileInputStream;
+
 public class PasswordActivity extends AppCompatActivity {
+
+    public String username;
+    public String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,5 +48,28 @@ public class PasswordActivity extends AppCompatActivity {
     public void returnClicked(View view) {
         Intent intent = new Intent(PasswordActivity.this, AccountsActivity.class);
         startActivity(intent);
+    }
+
+    public void readPassword() {
+
+        try {
+            FileInputStream fin = openFileInput("StorePass");
+
+            int c;
+            String temp = "";
+            while ((c = fin.read()) != -1) {
+                temp = temp + Character.toString((char) c);
+            }
+
+            String[] info = temp.split("\\s+");
+
+            username = info[0];
+            password = info[1]; //TODO DECRYPT PASSWORD
+
+            //string temp contains all the data of the file.
+            fin.close();
+        } catch(Exception e) {
+            Log.e("error","Couldn't find file");
+        }
     }
 }

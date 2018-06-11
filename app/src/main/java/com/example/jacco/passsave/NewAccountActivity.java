@@ -1,5 +1,6 @@
 package com.example.jacco.passsave;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,16 +12,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Random;
 
-public class NewAccountActivity extends AppCompatActivity {
+public class NewAccountActivity extends AppCompatActivity implements FirebaseHelper.CallBack{
 
-    int[] ids = {R.id.account, R.id.password};
-    String account;
+    int[] ids = {R.id.account, R.id.username, R.id.password};
+    String username;
     String password;
     String[] letters = {
             "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P",
@@ -34,7 +38,48 @@ public class NewAccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_account);
 
+        readPassword();
+    }
 
+    @Override
+    public void gotQuestions(ArrayList<Question> questions) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        String text = "Something went wrong...";
+        Toast.makeText(context, text, duration).show();
+
+        // log error
+        Log.e("ERROR", "You're not supposed to be here!!");
+    }
+    @Override
+    public void gotQuestionsError(String message) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        String text = "Something went wrong...";
+        Toast.makeText(context, text, duration).show();
+
+        // log error
+        Log.e("ERROR", message);
+    }
+    @Override
+    public void gotAccounts(ArrayList<Account> accounts) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        String text = "Something went wrong...";
+        Toast.makeText(context, text, duration).show();
+
+        // log error
+        Log.e("ERROR", "you're not supposed to be here!!");
+    }
+    @Override
+    public void gotAccountsError(String message) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        String text = "Something went wrong...";
+        Toast.makeText(context, text, duration).show();
+
+        // log error
+        Log.e("ERROR", message);
     }
 
     // add menu
@@ -62,24 +107,36 @@ public class NewAccountActivity extends AppCompatActivity {
 
     public void acceptButtonClicked(View view) {
         EditText accountText = findViewById(ids[0]);
-        EditText passwordText = findViewById(ids[1]);
+        EditText usernameText = findViewById(ids[1]);
+        EditText passwordText = findViewById(ids[2]);
 
-        account = accountText.getText().toString();
-        password = passwordText.getText().toString();
+        String account = accountText.getText().toString();
+        String newPassword = passwordText.getText().toString();
+        String newUsername = usernameText.getText().toString();
 
-        if (account.length() == 0 || password.length() == 0) {
+        if (account.length() == 0 || newUsername.length() == 0 || newPassword.length() == 0) {
             Log.d("error", "Something is empty");
+        } else {
+
+            Account newAccount = new Account(account, newUsername, newPassword);
+
+            newAccount.setAccount(account);
+            newAccount.setUsername(newUsername);
+            newAccount.setPassword(newPassword);
+
+            Log.d("error", "Kom je hier ook???????????????????????????");
+
+            FirebaseHelper helper = new FirebaseHelper(this, username);
+            helper.addAccount(newAccount);
+
+            Intent intent = new Intent(NewAccountActivity.this, AccountsActivity.class);
+            startActivity(intent);
         }
-
-        //TODO ADD ACOUNT TO FIREBASE
-
-        Intent intent = new Intent(NewAccountActivity.this, AccountsActivity.class);
-        startActivity(intent);
     }
 
 
     public void randomPasswordClicked(View view) {
-        EditText passwordText = findViewById(ids[1]);
+        EditText passwordText = findViewById(ids[2]);
         String randomPassword = "";
 
         for (int i = 0, n = 8; i < n; i++) {
@@ -94,7 +151,7 @@ public class NewAccountActivity extends AppCompatActivity {
 
     public void visibilityClicked(View view) {
 
-        EditText passwordText = findViewById(ids[1]);
+        EditText passwordText = findViewById(ids[2]);
 
         CheckBox checkBox = (CheckBox) view;
         Boolean checked = checkBox.isChecked();
@@ -103,6 +160,29 @@ public class NewAccountActivity extends AppCompatActivity {
             passwordText.setInputType(InputType.TYPE_CLASS_TEXT);
         } else {
             passwordText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        }
+    }
+
+    public void readPassword() {
+
+        try {
+            FileInputStream fin = openFileInput("StorePass");
+
+            int c;
+            String temp = "";
+            while ((c = fin.read()) != -1) {
+                temp += Character.toString((char) c);
+            }
+
+            String[] info = temp.split("\\s+");
+
+            username = info[0];
+            password = info[1];
+
+            //string temp contains all the data of the file.
+            fin.close();
+        } catch(Exception e) {
+            Log.e("error","Couldn't find file");
         }
     }
 

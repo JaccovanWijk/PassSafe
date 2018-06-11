@@ -5,20 +5,20 @@ package com.example.jacco.passsave;
  */
 
 public class Question {
-    public String personalQuestion;
+    public String question;
     public String answer;
 
-    public Question(String personalQuestion, String answer) {
-        this.personalQuestion = personalQuestion;
+    public Question(String question, String answer) {
+        this.question = question;
         this.answer = answer;
     }
 
-    public String getPersonalQuestion() {
-        return personalQuestion;
+    public String getQuestion() {
+        return question;
     }
 
-    public void setPersonalQuestion(String personalQuestion) {
-        this.personalQuestion = personalQuestion;
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
     public String getAnswer() {

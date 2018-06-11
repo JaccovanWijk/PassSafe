@@ -1,6 +1,10 @@
 package com.example.jacco.passsave;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -9,6 +13,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,38 +26,81 @@ import java.util.ArrayList;
 
 public class FirebaseHelper extends AES{
 
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    public FirebaseHelper() {
+    }
 
     public interface CallBack {
-        void gotCategories(ArrayList<String> accounts);
-        void gotCategoriesError(String message);
+        void gotQuestions(ArrayList<Question> questions);
+        void gotQuestionsError(String message);
+        void gotAccounts(ArrayList<Account> accounts);
+        void gotAccountsError(String message);
     }
 
     private Context context;
     private CallBack delegate;
     private DatabaseReference database;
 
-    public FirebaseHelper(Context context) {
+    public FirebaseHelper(Context context, String username) {
         this.context = context;
-        // TODO accounts moet maybe een laag dieper de mapjes in?
-//        database = FirebaseDatabase.getInstance().getReference();
-
-        // set key for encrypting
-//        setKey();
-
-        mAuth = FirebaseAuth.getInstance();
-
-        // upload main password
-//        DatabaseReference ref = database.push();
-//        ref.setValue(encrypt(password));
+        database = FirebaseDatabase.getInstance().getReference(username);
     }
 
-    public void addAccount(String account, String password) {
-        // TODO Add account under username
+    public void addQuestion(Question question) {
+
+        DatabaseReference ref = database.child("Questions").push();
+        ref.setValue(question);
+
     }
 
-    // TODO Add all the other functions
+    public void getQuestions(CallBack activity) {
 
+        delegate = activity;
+
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Question> questions = new ArrayList<>();
+
+                for (DataSnapshot child : dataSnapshot.child("questions").getChildren()) {
+                    questions.add(child.getValue(Question.class));
+                }
+
+                delegate.gotQuestions(questions);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                delegate.gotQuestionsError(databaseError.getMessage());
+            }
+        });
+    }
+
+    public void addAccount(Account account) {
+        DatabaseReference ref = database.child("Accounts").push();
+        ref.setValue(account);
+    }
+
+    public void getAccounts(CallBack activity) {
+
+        delegate = activity;
+
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Account> accounts = new ArrayList<>();
+
+                for (DataSnapshot child : dataSnapshot.child("accounts").getChildren()) {
+                    accounts.add(child.getValue(Account.class));
+                }
+
+                delegate.gotAccounts(accounts);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                delegate.gotAccountsError(databaseError.getMessage());
+            }
+        });
+    }
 
 }

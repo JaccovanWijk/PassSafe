@@ -38,10 +38,8 @@ public class AES extends Base64 {
             secretKey = new SecretKeySpec(key, "AES");
 
         } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -63,8 +61,10 @@ public class AES extends Base64 {
         AES.encryptedString = encryptedString;
     }
 
-    public static String encrypt(String strToEncrypt)
+    public static String encrypt(String strToEncrypt, String key)
     {
+        setKey(key);
+
         try
         {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -76,12 +76,14 @@ public class AES extends Base64 {
         {
             System.out.println("Error while encrypting: "+e.toString());
         }
-        return null;
+        return getEncryptedString();
 
     }
 
-    public static String decrypt(String strToDecrypt)
+    public static String decrypt(String strToDecrypt, String key)
     {
+        setKey(key);
+
         try
         {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
@@ -93,7 +95,7 @@ public class AES extends Base64 {
         {
             System.out.println("Error while decrypting: "+e.toString());
         }
-        return null;
+        return getDecryptedString();
     }
 
 
@@ -103,13 +105,13 @@ public class AES extends Base64 {
         final String strPssword = "encryptor key";
         AES.setKey(strPssword);
 
-        AES.encrypt(strToEncrypt.trim());
+        AES.encrypt(strToEncrypt.trim(), "hoi");
 
         System.out.println("String to Encrypt: " + strToEncrypt);
         System.out.println("Encrypted: " + AES.getEncryptedString());
 
         final String strToDecrypt =  AES.getEncryptedString();
-        AES.decrypt(strToDecrypt.trim());
+        AES.decrypt(strToDecrypt.trim(), "hoi");
 
         System.out.println("String To Decrypt : " + strToDecrypt);
         System.out.println("Decrypted : " + AES.getDecryptedString());

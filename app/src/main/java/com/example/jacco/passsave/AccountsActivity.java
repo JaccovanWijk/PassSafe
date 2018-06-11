@@ -18,29 +18,23 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 
 public class AccountsActivity extends AppCompatActivity  {
 
     String username;
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts);
 
-        Intent intent = getIntent();
-        username = (String) intent.getSerializableExtra("username");
-
         ListView listview = findViewById(R.id.listview);
         listview.setOnItemClickListener(new ListClickListener());
         listview.setOnItemLongClickListener(new ListLongClickListener());
-
-//        db = EntryDatabase.getInstance(this);
-//        Cursor cursor = db.selectAll();
-//        ArrayAdapter<String> adapter = new AccountsAdapter(this, new);
 
         //TODO LOAD IN CORRECT LIST FROM FIREBASE
         ArrayList<String> list = new ArrayList<String>();
@@ -95,5 +89,27 @@ public class AccountsActivity extends AppCompatActivity  {
         // go to next activity
         Intent intent = new Intent(AccountsActivity.this, NewAccountActivity.class);
         startActivity(intent);
+    }
+
+    public void readPassword() {
+
+        try {
+            FileInputStream fin = openFileInput("StorePass");
+
+            int c;
+            String temp = "";
+            while ((c = fin.read()) != -1) {
+                temp = temp + Character.toString((char) c);
+            }
+
+            String[] info = temp.split("\\s+");
+
+            username = info[0];
+
+            //string temp contains all the data of the file.
+            fin.close();
+        } catch(Exception e) {
+            Log.e("error","Couldn't find file");
+        }
     }
 }
