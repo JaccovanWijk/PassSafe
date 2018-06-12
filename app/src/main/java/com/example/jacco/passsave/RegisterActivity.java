@@ -55,7 +55,6 @@ public class RegisterActivity extends AppCompatActivity {
             Log.d("error", "password1 != password2");
         }
         else {
-            // TODO ENCRYPT THE PASSWORD
             createUser();
         }
     }
@@ -87,7 +86,15 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void storePassword() {
         String filename = "StorePass";
-        String fileContents = username + "\n" + AES.encrypt(password1, "randomKey"); //TODO HASH PASSWORD better
+
+        String savedUsername = "";
+        String regx = ".#$[]";
+        char[] ca = regx.toCharArray();
+        for (char c : ca) {
+            savedUsername = username.replace(""+c, "");
+        }
+
+        String fileContents = savedUsername + "\n" + AES.encrypt(password1, "randomKey"); //TODO HASH PASSWORD better
         FileOutputStream outputStream;
 
         try {

@@ -19,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Random;
@@ -45,6 +47,14 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         Intent intent = getIntent();
         filledIn = (Boolean) intent.getSerializableExtra("boolean");
         account = (String) intent.getSerializableExtra("account");
+
+        randomGenerator = new Random();
+
+        if (filledIn) {
+            Log.d("filledin", "true");
+        } else {
+            Log.d("filledin", "false");
+        }
 
         readPassword();
 
@@ -131,6 +141,9 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
     public void submitClicked(View view) {
 
+        TextView questionText = findViewById(R.id.question);
+        String question = questionText.getText().toString();
+
         EditText answerText = findViewById(R.id.answer);
         String givenAnswer = answerText.getText().toString();
 
@@ -150,7 +163,11 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
         } else {
 
-            mainQuestion.setQuestion(selectedQuestion);
+            Log.d("error?", question + "???????????????????????????????????????????");
+
+            //TODO WHY IS question EMPTY?????
+
+            mainQuestion.setQuestion(question);
             mainQuestion.setAnswer(givenAnswer);
 
             FirebaseHelper helper = new FirebaseHelper(this, username);

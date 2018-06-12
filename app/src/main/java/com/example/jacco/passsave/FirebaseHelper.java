@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
 import android.content.Context;
@@ -42,7 +43,11 @@ public class FirebaseHelper extends AES{
 
     public FirebaseHelper(Context context, String username) {
         this.context = context;
-        database = FirebaseDatabase.getInstance().getReference(username);
+
+        FirebaseDatabase firebase = FirebaseDatabase.getInstance();
+        firebase.setLogLevel(Logger.Level.DEBUG);
+        database = firebase.getReference(username);
+
     }
 
     public void addQuestion(Question question) {

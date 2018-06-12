@@ -64,42 +64,52 @@ public class LoginActivity extends AppCompatActivity {
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();
 
-        Log.d("error","why");
+        Log.d("error", "why");
 
-        if(username.length() == 0 || password.length() == 0) {
+        if (username.length() == 0 || password.length() == 0) {
             Log.d("error", "something is empty");
-        }
-        mAuth.signInWithEmailAndPassword(username, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("Sign in", "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+        } else {
+            mAuth.signInWithEmailAndPassword(username, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d("Sign in", "signInWithEmail:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
 
-                            storePassword();
+                                storePassword();
 
-                            Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
-                            startActivity(intent);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("Sign out", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
+                                startActivity(intent);
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w("Sign out", "signInWithEmail:failure", task.getException());
+                                Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
 
-        storePassword();
 
-        Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
-        startActivity(intent);
+            storePassword();
+
+            Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void storePassword() {
         String filename = "StorePass";
-        String fileContents = username + "\n" + AES.encrypt(password, "randomKey"); //TODO HASH PASSWORD better
+
+        String savedUsername = "";
+        String regx = ".#$[]";
+        char[] ca = regx.toCharArray();
+        for (char c : ca) {
+            savedUsername = username.replace(""+c, "");
+        }
+
+        String fileContents = savedUsername + "\n" + AES.encrypt(password, "randomKey"); //TODO HASH PASSWORD better
         FileOutputStream outputStream;
 
         try {

@@ -32,6 +32,8 @@ public class AccountsActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts);
 
+        readPassword();
+
         ListView listview = findViewById(R.id.listview);
         listview.setOnItemClickListener(new ListClickListener());
         listview.setOnItemLongClickListener(new ListLongClickListener());
