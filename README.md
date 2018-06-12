@@ -30,11 +30,11 @@ I’ll be using Firebase to store all encrypted passwords.
 The hardest part will probably be the encrypting. I’d like to experiment with this and make it as secure as possible with the available recourses.
 #### Encryption
 When logging in a key will be created which encrypts and decrypts your passwords. Therefore writing in the firebase goes as follows:
-* Get key. This wil be the hashed password. Hash with [Base64](https://gist.github.com/EmilHernvall/953733);
+* Get key. This wil be the hashed password. Hash with Base64. Optional:(https://gist.github.com/EmilHernvall/953733);
 * Encrypting the password with [AES encryption](https://aesencryption.net/);
 * Write to firebase.
 
 Reading from firebase goes as follows:
-* Get key; This wil be the hashed password. Hash with [Base64](https://gist.github.com/EmilHernvall/953733);
+* Get key. This wil be the hashed password. Hash with Base64. Optional:(https://gist.github.com/EmilHernvall/953733);
 * Read from firebase;
 * Decrypting the password with [AES encryption](https://aesencryption.net/).
