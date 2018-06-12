@@ -1,10 +1,15 @@
 package com.example.jacco.passsave;
 
+import java.io.Serializable;
+
 /**
  * Created by Jacco on 7-6-2018.
  */
 
-public class Account {
+public class Account implements Serializable{
+
+    public Account() {
+    }
 
     public String account;
     public String username;

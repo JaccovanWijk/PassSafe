@@ -38,11 +38,6 @@ public class LoginActivity extends AppCompatActivity {
         * TODO WAAROM WIL HIJ NIET TERUG NAAR PASSWORDMODE(NEWACCOUNTACTIVITY)?
         */
         mAuth = FirebaseAuth.getInstance();
-
-        String encriptie = AES.encrypt("hoi", "hoi");
-        String decriptie = AES.decrypt(encriptie, "hoi");
-
-
     }
 
     @Override
@@ -63,8 +58,6 @@ public class LoginActivity extends AppCompatActivity {
 
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();
-
-        Log.d("error", "why");
 
         if (username.length() == 0 || password.length() == 0) {
             Log.d("error", "something is empty");
@@ -102,14 +95,11 @@ public class LoginActivity extends AppCompatActivity {
     public void storePassword() {
         String filename = "StorePass";
 
-        String savedUsername = "";
-        String regx = ".#$[]";
-        char[] ca = regx.toCharArray();
-        for (char c : ca) {
-            savedUsername = username.replace(""+c, "");
-        }
+        username = username.replaceAll("[^a-zA-Z0-9]","");
 
-        String fileContents = savedUsername + "\n" + AES.encrypt(password, "randomKey"); //TODO HASH PASSWORD better
+        Log.d("????????????", username);
+
+        String fileContents = username + "\n" + AES.encrypt(password, "randomKey"); //TODO HASH PASSWORD better
         FileOutputStream outputStream;
 
         try {

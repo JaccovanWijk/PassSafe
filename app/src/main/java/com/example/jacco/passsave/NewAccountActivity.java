@@ -114,6 +114,11 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         String newPassword = passwordText.getText().toString();
         String newUsername = usernameText.getText().toString();
 
+        //TODO HIJ ACCEPTEERT GEEN WACHTWOORDEN VAN < 8 IN DE ENCRIPTIE, WHY NOT EN HOE ZOU IK DIT KUNNEN ONTWIJKEN
+        while (newPassword.length() < 8) {
+            newPassword += "";
+        }
+
         if (account.length() == 0 || newUsername.length() == 0 || newPassword.length() == 0) {
             Log.d("error", "Something is empty");
         } else {
@@ -122,9 +127,7 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
 
             newAccount.setAccount(account);
             newAccount.setUsername(newUsername);
-            newAccount.setPassword(newPassword);
-
-            Log.d("error", "Kom je hier ook???????????????????????????");
+            newAccount.setPassword(AES.encrypt(newPassword, password));
 
             FirebaseHelper helper = new FirebaseHelper(this, username);
             helper.addAccount(newAccount);

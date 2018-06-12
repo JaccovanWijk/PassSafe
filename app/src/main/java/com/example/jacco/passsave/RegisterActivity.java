@@ -87,14 +87,11 @@ public class RegisterActivity extends AppCompatActivity {
     public void storePassword() {
         String filename = "StorePass";
 
-        String savedUsername = "";
-        String regx = ".#$[]";
-        char[] ca = regx.toCharArray();
-        for (char c : ca) {
-            savedUsername = username.replace(""+c, "");
-        }
+        username = username.replaceAll("[^a-zA-Z0-9]","");
 
-        String fileContents = savedUsername + "\n" + AES.encrypt(password1, "randomKey"); //TODO HASH PASSWORD better
+        Log.d("????????????", username);
+
+        String fileContents = username + "\n" + AES.encrypt(password1, "randomKey"); //TODO HASH PASSWORD better
         FileOutputStream outputStream;
 
         try {

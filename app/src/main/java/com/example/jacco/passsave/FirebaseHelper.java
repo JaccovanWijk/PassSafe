@@ -45,7 +45,7 @@ public class FirebaseHelper extends AES{
         this.context = context;
 
         FirebaseDatabase firebase = FirebaseDatabase.getInstance();
-        firebase.setLogLevel(Logger.Level.DEBUG);
+//        firebase.setLogLevel(Logger.Level.DEBUG);
         database = firebase.getReference(username);
 
     }
@@ -66,7 +66,7 @@ public class FirebaseHelper extends AES{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Question> questions = new ArrayList<>();
 
-                for (DataSnapshot child : dataSnapshot.child("questions").getChildren()) {
+                for (DataSnapshot child : dataSnapshot.child("Questions").getChildren()) {
                     questions.add(child.getValue(Question.class));
                 }
 
@@ -94,7 +94,7 @@ public class FirebaseHelper extends AES{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Account> accounts = new ArrayList<>();
 
-                for (DataSnapshot child : dataSnapshot.child("accounts").getChildren()) {
+                for (DataSnapshot child : dataSnapshot.child("Accounts").getChildren()) {
                     accounts.add(child.getValue(Account.class));
                 }
 

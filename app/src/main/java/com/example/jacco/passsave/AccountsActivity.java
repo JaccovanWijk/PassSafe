@@ -1,5 +1,8 @@
 package com.example.jacco.passsave;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
@@ -14,18 +17,30 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
-public class AccountsActivity extends AppCompatActivity  {
+public class AccountsActivity extends AppCompatActivity implements FirebaseHelper.CallBack {
 
-    String username;
+    public String username;
+    public ArrayList<Account> accounts;
+    public DatabaseReference myRef;
+    public AccountsAdapter adapter;
+    public ListView listView;
+    public Account selectedAccount;
+    public String deleteAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +49,15 @@ public class AccountsActivity extends AppCompatActivity  {
 
         readPassword();
 
-        ListView listview = findViewById(R.id.listview);
-        listview.setOnItemClickListener(new ListClickListener());
-        listview.setOnItemLongClickListener(new ListLongClickListener());
+        myRef = FirebaseDatabase.getInstance().getReference(username);
+        accounts = new ArrayList<>();
 
-        //TODO LOAD IN CORRECT LIST FROM FIREBASE
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("Facebook");
-        listview.setAdapter(new AccountsAdapter(this, list));
+        listView = findViewById(R.id.listview);
+        listView.setOnItemClickListener(new ListClickListener());
+        listView.setOnItemLongClickListener(new ListLongClickListener());
+
+        FirebaseHelper helper = new FirebaseHelper(this, username);
+        helper.getAccounts(this);
     }
 
     // Add menu
@@ -73,8 +89,14 @@ public class AccountsActivity extends AppCompatActivity  {
             TextView accountText = view.findViewById(R.id.account);
             String account = accountText.getText().toString();
 
+            for (Account anAccount : accounts) {
+                if(anAccount.getAccount().equals(account)) {
+                    selectedAccount = anAccount;
+                }
+            }
+
             Intent intent = new Intent(AccountsActivity.this, QuestionActivity.class);
-            intent.putExtra("account", account);
+            intent.putExtra("account", selectedAccount);
             intent.putExtra("boolean", true);
             startActivity(intent);
         }
@@ -83,7 +105,13 @@ public class AccountsActivity extends AppCompatActivity  {
     private class ListLongClickListener implements AdapterView.OnItemLongClickListener {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            return false;
+            TextView accountText = view.findViewById(R.id.account);
+            deleteAccount = accountText.getText().toString();
+
+            areYouSure();
+
+            // TODO POPUPSCREEN "WANT TO DELETE?"
+            return true;
         }
     }
 
@@ -91,6 +119,83 @@ public class AccountsActivity extends AppCompatActivity  {
         // go to next activity
         Intent intent = new Intent(AccountsActivity.this, NewAccountActivity.class);
         startActivity(intent);
+    }
+
+    public void updateData() {
+        adapter = new AccountsAdapter(this, accounts);
+        listView.setAdapter(adapter);
+    }
+
+    @Override
+    public void gotQuestions(ArrayList<Question> questions) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        String text = "Something went wrong...";
+        Toast.makeText(context, text, duration).show();
+
+        // log error
+        Log.e("ERROR", "You're not supposed to be here!");
+    }
+    @Override
+    public void gotQuestionsError(String message) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        String text = "Something went wrong...";
+        Toast.makeText(context, text, duration).show();
+
+        // log error
+        Log.e("ERROR", message);
+    }
+    @Override
+    public void gotAccounts(ArrayList<Account> accounts) {
+        this.accounts = accounts;
+
+        updateData();
+    }
+    @Override
+    public void gotAccountsError(String message) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        String text = "Something went wrong...";
+        Toast.makeText(context, text, duration).show();
+
+        // log error
+        Log.e("ERROR", message);
+    }
+
+    public void areYouSure() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want to delete "+ deleteAccount + "?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Delete item
+                        deleteItem();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Don't delete
+                    }
+                });
+        builder.show();
+    }
+
+    public void deleteItem() {
+        Query query = myRef.child("Accounts").orderByChild("account").equalTo(deleteAccount);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Error", "onCancelled", databaseError.toException());
+            }
+        });
     }
 
     public void readPassword() {

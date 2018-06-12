@@ -5,6 +5,10 @@ package com.example.jacco.passsave;
  */
 
 public class Question {
+
+    public Question() {
+    }
+
     public String question;
     public String answer;
 

@@ -4,6 +4,9 @@ package com.example.jacco.passsave;
  * Created by Jacco on 6-6-2018.
  */
 
+import android.util.*;
+import android.util.Base64;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,7 +19,7 @@ import javax.crypto.spec.SecretKeySpec;
  Aes encryption
  */
 
-public class AES extends Base64 {
+public class AES {
 
     private static SecretKeySpec secretKey ;
     private static byte[] key ;
@@ -70,7 +73,7 @@ public class AES extends Base64 {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-            setEncryptedString(encode(cipher.doFinal(strToEncrypt.getBytes("UTF-8"))));
+            setEncryptedString(Base64.encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")), Base64.DEFAULT));
         }
         catch (Exception e)
         {
@@ -89,7 +92,7 @@ public class AES extends Base64 {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
 
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
-            setDecryptedString(new String(cipher.doFinal(decode(strToDecrypt))));
+            setDecryptedString(new String(cipher.doFinal(Base64.decode(strToDecrypt, Base64.DEFAULT))));
         }
         catch (Exception e)
         {

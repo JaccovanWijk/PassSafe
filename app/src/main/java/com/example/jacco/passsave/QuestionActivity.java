@@ -28,15 +28,15 @@ import java.util.Random;
 public class QuestionActivity extends AppCompatActivity implements FirebaseHelper.CallBack{
 
     //TODO MAAK EEN SPINNER MET ALLE VRAGEN IN DE XML IPV 1 UITKIEZEN
-    public String[] questions = {"What is your fathers first name", "What is your mothers first name",
-                                 "What was your first pets name", "Which city/town were you born in"};
+    public String[] questions = {"What is your fathers first name?", "What is your mothers first name?",
+                                 "What was your first pets name?", "Which city/town were you born in?"};
     public ArrayList<Question> foundQuestions;
     public String selectedQuestion;
     public Question mainQuestion;
     public Boolean filledIn;
     public String username;
     public String answer;
-    public String account;
+    public Account account;
     private Random randomGenerator;
 
     @Override
@@ -46,15 +46,11 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
         Intent intent = getIntent();
         filledIn = (Boolean) intent.getSerializableExtra("boolean");
-        account = (String) intent.getSerializableExtra("account");
+        account = (Account) intent.getSerializableExtra("account");
 
         randomGenerator = new Random();
-
-        if (filledIn) {
-            Log.d("filledin", "true");
-        } else {
-            Log.d("filledin", "false");
-        }
+        mainQuestion = new Question();
+        foundQuestions = new ArrayList<>();
 
         readPassword();
 
@@ -75,6 +71,8 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
     public void gotQuestions(ArrayList<Question> questions) {
 
         foundQuestions = questions;
+
+        System.out.println(questions.size());
 
         int index = randomGenerator.nextInt(questions.size());
         mainQuestion = questions.get(index);
@@ -152,6 +150,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
             if (givenAnswer.equals(answer)) {
 
                 Intent intent = new Intent(QuestionActivity.this, PasswordActivity.class);
+                intent.putExtra("account", account);
                 startActivity(intent);
 
             } else {
@@ -162,10 +161,6 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
             }
 
         } else {
-
-            Log.d("error?", question + "???????????????????????????????????????????");
-
-            //TODO WHY IS question EMPTY?????
 
             mainQuestion.setQuestion(question);
             mainQuestion.setAnswer(givenAnswer);

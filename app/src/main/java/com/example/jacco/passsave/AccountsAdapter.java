@@ -18,11 +18,11 @@ import java.util.List;
  * Created by Jacco on 5-6-2018.
  */
 
-public class AccountsAdapter extends ArrayAdapter<String>{
+public class AccountsAdapter extends ArrayAdapter<Account>{
 
-    private ArrayList<String> accounts;
+    private ArrayList<Account> accounts;
 
-    public AccountsAdapter(@NonNull Context context, @NonNull ArrayList<String> accounts) {
+    public AccountsAdapter(@NonNull Context context, @NonNull ArrayList<Account> accounts) {
         super(context, R.layout.item, accounts);
         this.accounts = accounts;
     }
@@ -36,7 +36,7 @@ public class AccountsAdapter extends ArrayAdapter<String>{
         }
 
         TextView textView = convertView.findViewById(R.id.account);
-        textView.setText(accounts.get(position));
+        textView.setText(accounts.get(position).getAccount());
 
         return convertView;
     }
