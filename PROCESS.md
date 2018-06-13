@@ -20,3 +20,4 @@ After some problems with nullpointers I figured out where the problem was (Upper
 # Day 5 13 - 06 - 2018
 Today I faced very little problems. I fixed the last nullpointers I could find and I made the login only possible with a verified email. I pushed a working version to git as my alpha v1.1.
 Sometimes my dectypt function does not work. I can't figure out why and what's causing it. Forcing the bug to appear does not work so I hope it's a one time errer.
+**UPDATE** Random passwords can't be decrypted and I can't figure out why?
