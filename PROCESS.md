@@ -15,4 +15,8 @@ Today I presented my idea and got some feedback, but all minor things.
 * Then I fixed my ecryption and now it's ready for use!
 
 # Day 4 12 - 06 - 2018
-After some problems with nullpointers I figured out where the problem was (Uppercase/lowercase letters) and fixed it. 
+After some problems with nullpointers I figured out where the problem was (Uppercase/lowercase letters) and fixed it. Before I fixed it I looked at the way I wanted to close activities after intents. That way if you press the "Back" butten you won't end up somewhere you don't belong. 
+
+# Day 5 13 - 06 - 2018
+Today I faced very little problems. I fixed the last nullpointers I could find and I made the login only possible with a verified email. I pushed a working version to git as my alpha v1.1.
+Sometimes my dectypt function does not work. I can't figure out why and what's causing it. Forcing the bug to appear does not work so I hope it's a one time errer.
