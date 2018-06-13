@@ -94,6 +94,16 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         spinner.setAdapter(adapter);
         spinner.setSelection(0);
 
+        if (questions.size() == 0) {
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            String text = "No questions added yet, please add them in the settings.";
+            Toast.makeText(context, text, duration).show();
+
+            Intent intent = new Intent(QuestionActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        }
+
     }
     @Override
     public void gotQuestionsError(String message) {

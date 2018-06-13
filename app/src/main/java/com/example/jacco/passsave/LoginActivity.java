@@ -25,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
     // TODO PROGRESSBAR FOR USER INTERFACE
     public int[] ids = {R.id.username, R.id.password};
     private FirebaseAuth mAuth;
-    public FirebaseUser user;
     private String username;
     private String password;
 
@@ -60,17 +59,10 @@ public class LoginActivity extends AppCompatActivity {
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-
         //TODO CHECK IF USERS EMAIL IS VERIFICATED
 
         if (username.length() == 0 || password.length() == 0) {
             Log.d("error", "something is empty");
-        } else if (user.isEmailVerified()){
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_LONG;
-            String text = "E-Mail not verified!";
-            Toast.makeText(context, text, duration).show();
         } else {
             mAuth.signInWithEmailAndPassword(username, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -81,10 +73,17 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d("Sign in", "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
 
-                                storePassword();
+                                if (!user.isEmailVerified()) {
+                                    Context context = getApplicationContext();
+                                    int duration = Toast.LENGTH_LONG;
+                                    String text = "E-Mail not verified!";
+                                    Toast.makeText(context, text, duration).show();
+                                } else {
+                                    storePassword();
 
-                                Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
-                                startActivity(intent);
+                                    Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
+                                    startActivity(intent);
+                                }
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w("Sign out", "signInWithEmail:failure", task.getException());
