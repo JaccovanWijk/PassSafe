@@ -40,13 +40,20 @@ public class FirebaseHelper extends AES{
     private Context context;
     private CallBack delegate;
     private DatabaseReference database;
+    public FirebaseUser user;
+    public String userId;
 
-    public FirebaseHelper(Context context, String username) {
+    public FirebaseHelper(Context context) {
         this.context = context;
 
         FirebaseDatabase firebase = FirebaseDatabase.getInstance();
-//        firebase.setLogLevel(Logger.Level.DEBUG);
-        database = firebase.getReference(username);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            userId = user.getUid();
+        }
+
+        database = firebase.getReference(userId);
 
     }
 

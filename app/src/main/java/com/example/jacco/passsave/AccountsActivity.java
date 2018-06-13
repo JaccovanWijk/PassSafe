@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 
 public class AccountsActivity extends AppCompatActivity implements FirebaseHelper.CallBack {
 
-    public String username;
+    public String password;
     public ArrayList<Account> accounts;
     public DatabaseReference myRef;
     public AccountsAdapter adapter;
@@ -49,14 +50,20 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
 
         readPassword();
 
-        myRef = FirebaseDatabase.getInstance().getReference(username);
+        String userId = "";
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            userId = user.getUid();
+        }
+
+        myRef = FirebaseDatabase.getInstance().getReference(userId);
         accounts = new ArrayList<>();
 
         listView = findViewById(R.id.listview);
         listView.setOnItemClickListener(new ListClickListener());
         listView.setOnItemLongClickListener(new ListLongClickListener());
 
-        FirebaseHelper helper = new FirebaseHelper(this, username);
+        FirebaseHelper helper = new FirebaseHelper(this);
         helper.getAccounts(this);
     }
 
@@ -71,9 +78,9 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.LogOut:
-                //TODO DIT WERKT NOG NIET MET DE TERUGKNOP
                 Intent intent = new Intent(AccountsActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.AccountSettings:
                 Intent intent2 = new Intent(AccountsActivity.this, SettingsActivity.class);
@@ -110,7 +117,6 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
 
             areYouSure();
 
-            // TODO POPUPSCREEN "WANT TO DELETE?"
             return true;
         }
     }
@@ -211,12 +217,25 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
 
             String[] info = temp.split("\\s+");
 
-            username = info[0];
+            password = info[0];
 
             //string temp contains all the data of the file.
             fin.close();
         } catch(Exception e) {
             Log.e("error","Couldn't find file");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            // user isn't signed in
+            Intent intent = new Intent(AccountsActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+            finish();
         }
     }
 }

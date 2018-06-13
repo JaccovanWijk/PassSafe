@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     // TODO PROGRESSBAR FOR USER INTERFACE
     public int[] ids = {R.id.username, R.id.password};
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    public FirebaseUser user;
     private String username;
     private String password;
 
@@ -34,8 +34,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         /*
-        * TODO WAAROM CRASHT HIJ NU? VGM NIKS AANGEPAST?
-        * TODO WAAROM WIL HIJ NIET TERUG NAAR PASSWORDMODE(NEWACCOUNTACTIVITY)?
+        * TODO IS DIT VEILIG GENOEG? NEEEEEE, versleutel ook vraag, antwoord en usernames
+        * TODO AUTHSTATE
+        * TODO ZORG DAT HIJ NA DE VRAAG BIJ QUESTIONACTIVITY PAS DE USER OPSLAAT ZODAT JE GEEN USER AANMAAKT ZONDER VRAAG!
         */
         mAuth = FirebaseAuth.getInstance();
     }
@@ -59,8 +60,17 @@ public class LoginActivity extends AppCompatActivity {
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        //TODO CHECK IF USERS EMAIL IS VERIFICATED
+
         if (username.length() == 0 || password.length() == 0) {
             Log.d("error", "something is empty");
+        } else if (user.isEmailVerified()){
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            String text = "E-Mail not verified!";
+            Toast.makeText(context, text, duration).show();
         } else {
             mAuth.signInWithEmailAndPassword(username, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -83,23 +93,13 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                     });
-
-
-            storePassword();
-
-            Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
-            startActivity(intent);
         }
     }
 
     public void storePassword() {
         String filename = "StorePass";
 
-        username = username.replaceAll("[^a-zA-Z0-9]","");
-
-        Log.d("????????????", username);
-
-        String fileContents = username + "\n" + AES.encrypt(password, "randomKey"); //TODO HASH PASSWORD better
+        String fileContents = AES.encrypt(password, "randomKey"); //TODO HASH PASSWORD better
         FileOutputStream outputStream;
 
         try {
@@ -109,5 +109,15 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EditText usernameText = findViewById(ids[0]);
+        EditText passwordText = findViewById(ids[1]);
+
+        usernameText.setText("");
+        passwordText.setText("");
     }
 }

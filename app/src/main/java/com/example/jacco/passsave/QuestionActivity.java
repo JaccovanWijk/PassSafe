@@ -2,6 +2,7 @@ package com.example.jacco.passsave;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,10 +10,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,22 +30,19 @@ import com.google.firebase.database.ValueEventListener;
 import org.w3c.dom.Text;
 
 import java.io.FileInputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class QuestionActivity extends AppCompatActivity implements FirebaseHelper.CallBack{
 
-    //TODO MAAK EEN SPINNER MET ALLE VRAGEN IN DE XML IPV 1 UITKIEZEN
-    public String[] questions = {"What is your fathers first name?", "What is your mothers first name?",
+    public String[] allQuestions = {"What is your fathers first name?", "What is your mothers first name?",
                                  "What was your first pets name?", "Which city/town were you born in?"};
     public ArrayList<Question> foundQuestions;
-    public String selectedQuestion;
-    public Question mainQuestion;
     public Boolean filledIn;
     public String username;
     public String answer;
     public Account account;
-    private Random randomGenerator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,21 +53,26 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         filledIn = (Boolean) intent.getSerializableExtra("boolean");
         account = (Account) intent.getSerializableExtra("account");
 
-        randomGenerator = new Random();
-        mainQuestion = new Question();
         foundQuestions = new ArrayList<>();
 
         readPassword();
 
         if (filledIn) {
-            FirebaseHelper helper = new FirebaseHelper(this, username);
+            FirebaseHelper helper = new FirebaseHelper(this);
             helper.getQuestions(this);
         } else {
-            int index = randomGenerator.nextInt(questions.length);
-            selectedQuestion = questions[index];
 
-            TextView questionText = findViewById(R.id.question);
-            questionText.setText(selectedQuestion);
+            ArrayList<String> unusedQuestions = new ArrayList<>();
+            for (String aQuestion : allQuestions) {
+                unusedQuestions.add(aQuestion);
+            }
+
+            Spinner spinner = findViewById(R.id.question);
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, unusedQuestions);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setSelection(0);
         }
 
     }
@@ -72,14 +82,17 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
         foundQuestions = questions;
 
-        System.out.println(questions.size());
+        ArrayList<String> usedQuestions = new ArrayList<>();
+        for (Question aQuestion : questions) {
+            usedQuestions.add(aQuestion.getQuestion());
+        }
 
-        int index = randomGenerator.nextInt(questions.size());
-        mainQuestion = questions.get(index);
+        Spinner spinner = findViewById(R.id.question);
 
-        TextView questionText = findViewById(R.id.question);
-        questionText.setText(mainQuestion.getQuestion());
-        answer = mainQuestion.getAnswer();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, usedQuestions);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0);
 
     }
     @Override
@@ -113,45 +126,29 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         Log.e("ERROR", message);
     }
 
-    // Add menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.logout_menu, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.LogOut:
-                //TODO DIT WERKT NOG NIET MET DE TERUGKNOP
-                Intent intent = new Intent(QuestionActivity.this, LoginActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.AccountSettings:
-                Intent intent2 = new Intent(QuestionActivity.this, SettingsActivity.class);
-                startActivity(intent2);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
     public void submitClicked(View view) {
 
-        TextView questionText = findViewById(R.id.question);
-        String question = questionText.getText().toString();
+        Spinner spinner = findViewById(R.id.question);
+        String question = spinner.getSelectedItem().toString();
 
         EditText answerText = findViewById(R.id.answer);
         String givenAnswer = answerText.getText().toString();
 
         if (filledIn) {
 
+            for (Question aQuestion : foundQuestions) {
+                if (aQuestion.getQuestion().equals(question)) {
+                    answer = aQuestion.getAnswer();
+                }
+            }
+
             if (givenAnswer.equals(answer)) {
 
                 Intent intent = new Intent(QuestionActivity.this, PasswordActivity.class);
                 intent.putExtra("account", account);
                 startActivity(intent);
+
+                finish();
 
             } else {
                 Context context = getApplicationContext();
@@ -162,32 +159,16 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
         } else {
 
-            mainQuestion.setQuestion(question);
-            mainQuestion.setAnswer(givenAnswer);
+            Question mainQuestion = new Question(question, givenAnswer);
 
-            FirebaseHelper helper = new FirebaseHelper(this, username);
+            FirebaseHelper helper = new FirebaseHelper(this);
             helper.addQuestion(mainQuestion);
 
             Intent intent = new Intent(QuestionActivity.this, LoginActivity.class);
             startActivity(intent);
 
-        }
-    }
+            finish();
 
-    public void changeQuestionClicked(View view) {
-        if (filledIn) {
-            int index = randomGenerator.nextInt(foundQuestions.size());
-            mainQuestion = foundQuestions.get(index);
-
-            TextView questionText = findViewById(R.id.question);
-            questionText.setText(mainQuestion.getQuestion());
-            answer = mainQuestion.getAnswer();
-        } else {
-            int index = randomGenerator.nextInt(questions.length);
-            selectedQuestion = questions[index];
-
-            TextView questionText = findViewById(R.id.question);
-            questionText.setText(selectedQuestion);
         }
     }
 
@@ -204,12 +185,25 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
             String[] info = temp.split("\\s+");
 
-            username = info[0];
+            String password = info[0];
 
             //string temp contains all the data of the file.
             fin.close();
         } catch(Exception e) {
             Log.e("error","Couldn't find file");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            // user isn't signed in
+            Intent intent = new Intent(QuestionActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+            finish();
         }
     }
 }

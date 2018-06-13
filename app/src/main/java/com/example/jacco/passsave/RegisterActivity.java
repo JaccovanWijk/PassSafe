@@ -33,7 +33,6 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
-
     }
 
     public void registerClicked(View view) {
@@ -71,9 +70,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                             storePassword();
 
+                            sendEmail();
+
                             Intent intent = new Intent(RegisterActivity.this, QuestionActivity.class);
                             intent.putExtra("boolean", false);
                             startActivity(intent);
+
+                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Not created", "createUserWithEmail:failure", task.getException());
@@ -87,11 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void storePassword() {
         String filename = "StorePass";
 
-        username = username.replaceAll("[^a-zA-Z0-9]","");
-
-        Log.d("????????????", username);
-
-        String fileContents = username + "\n" + AES.encrypt(password1, "randomKey"); //TODO HASH PASSWORD better
+        String fileContents = AES.encrypt(password1, "randomKey"); //TODO HASH PASSWORD better
         FileOutputStream outputStream;
 
         try {
@@ -101,5 +100,25 @@ public class RegisterActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendEmail() {
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        user.sendEmailVerification()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("E-Mail", "Email sent.");
+                        }
+                    }
+                });
+
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        String text = "A verification e-mail has been sent";
+        Toast.makeText(context, text, duration).show();
     }
 }

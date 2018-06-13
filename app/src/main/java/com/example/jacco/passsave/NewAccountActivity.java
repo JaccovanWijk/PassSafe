@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.SingleLineTransformationMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +16,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -24,7 +28,6 @@ import java.util.Random;
 public class NewAccountActivity extends AppCompatActivity implements FirebaseHelper.CallBack{
 
     int[] ids = {R.id.account, R.id.username, R.id.password};
-    String username;
     String password;
     String[] letters = {
             "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P",
@@ -93,9 +96,9 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.LogOut:
-                //TODO DIT WERKT NOG NIET MET DE TERUGKNOP
                 Intent intent = new Intent(NewAccountActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.AccountSettings:
                 Intent intent2 = new Intent(NewAccountActivity.this, SettingsActivity.class);
@@ -115,12 +118,17 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         String newUsername = usernameText.getText().toString();
 
         //TODO HIJ ACCEPTEERT GEEN WACHTWOORDEN VAN < 8 IN DE ENCRIPTIE, WHY NOT EN HOE ZOU IK DIT KUNNEN ONTWIJKEN
-        while (newPassword.length() < 8) {
-            newPassword += "";
-        }
+//        if (newPassword.length() < 8) {
+//            newPassword += "password";
+//        }
 
         if (account.length() == 0 || newUsername.length() == 0 || newPassword.length() == 0) {
             Log.d("error", "Something is empty");
+        } else if (newPassword.length() < 8) {
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            String text = "Password too short!";
+            Toast.makeText(context, text, duration).show();
         } else {
 
             Account newAccount = new Account(account, newUsername, newPassword);
@@ -129,11 +137,13 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
             newAccount.setUsername(newUsername);
             newAccount.setPassword(AES.encrypt(newPassword, password));
 
-            FirebaseHelper helper = new FirebaseHelper(this, username);
+            FirebaseHelper helper = new FirebaseHelper(this);
             helper.addAccount(newAccount);
 
             Intent intent = new Intent(NewAccountActivity.this, AccountsActivity.class);
             startActivity(intent);
+
+            finish();
         }
     }
 
@@ -142,7 +152,7 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         EditText passwordText = findViewById(ids[2]);
         String randomPassword = "";
 
-        for (int i = 0, n = 8; i < n; i++) {
+        for (int i = 0, n = 10; i < n; i++) {
             int idx = new Random().nextInt(letters.length);
             String random = letters[idx];
             randomPassword += random;
@@ -160,9 +170,9 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         Boolean checked = checkBox.isChecked();
 
         if (checked) {
-            passwordText.setInputType(InputType.TYPE_CLASS_TEXT);
+            passwordText.setTransformationMethod(SingleLineTransformationMethod.getInstance());
         } else {
-            passwordText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            passwordText.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
     }
 
@@ -179,8 +189,7 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
 
             String[] info = temp.split("\\s+");
 
-            username = info[0];
-            password = info[1];
+            password = info[0];
 
             //string temp contains all the data of the file.
             fin.close();
@@ -189,4 +198,16 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            // user isn't signed in
+            Intent intent = new Intent(NewAccountActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+            finish();
+        }
+    }
 }

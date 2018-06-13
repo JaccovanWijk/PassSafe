@@ -10,6 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.io.FileInputStream;
 
 public class PasswordActivity extends AppCompatActivity {
@@ -32,11 +35,10 @@ public class PasswordActivity extends AppCompatActivity {
         usernameText = findViewById(R.id.username);
         passwordText = findViewById(R.id.password);
 
-        System.out.println(account.getPassword());
-        System.out.println(AES.decrypt(account.getPassword(), password) + "?????????????????????????????????");
+        System.out.println(AES.decrypt(account.getPassword(), password));
 
-        usernameText.setText(account.getUsername());
-        passwordText.setText(AES.decrypt(account.getPassword(), password));
+        usernameText.setText("Your username is: " + account.getUsername());
+        passwordText.setText("Your password is: " + AES.decrypt(account.getPassword(), password));
     }
 
     // Add menu
@@ -50,15 +52,11 @@ public class PasswordActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.LogOut:
-                //TODO DIT WERKT NOG NIET MET DE TERUGKNOP
-                usernameText.setText("This will be a username if you follow the legit way;).");
-                passwordText.setText("**********");
                 Intent intent = new Intent(PasswordActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.AccountSettings:
-                usernameText.setText("This will be a username if you follow the legit way;).");
-                passwordText.setText("**********");
                 Intent intent2 = new Intent(PasswordActivity.this, SettingsActivity.class);
                 startActivity(intent2);
                 return true;
@@ -68,11 +66,10 @@ public class PasswordActivity extends AppCompatActivity {
 
     public void returnClicked(View view) {
 
-        usernameText.setText("This will be a username if you follow the legit way;).");
-        passwordText.setText("**********");
-
         Intent intent = new Intent(PasswordActivity.this, AccountsActivity.class);
         startActivity(intent);
+
+        finish();
     }
 
     public void readPassword() {
@@ -88,12 +85,25 @@ public class PasswordActivity extends AppCompatActivity {
 
             String[] info = temp.split("\\s+");
 
-            password = info[1];
+            password = info[0];
 
             //string temp contains all the data of the file.
             fin.close();
         } catch(Exception e) {
             Log.e("error","Couldn't find file");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            // user isn't signed in
+            Intent intent = new Intent(PasswordActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+            finish();
         }
     }
 }
