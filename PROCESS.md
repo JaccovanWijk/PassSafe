@@ -8,7 +8,7 @@ After finishing the designdocument yesterday I started to realise what I had in 
 
 # Day 2 08 - 06 - 2018
 
-Today I presented my idea and got some feedback, but all minor things.
+Today I presented my idea and got some feedback, but all minor things. I also realised that using the ```FirebaseHelper``` will clean up my code and prefent dublicate code.
 
 # Day 3 11 - 06 - 2018
 * I started out trying to fix my firebase which been irritating me for the past few days.
