@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import java.io.FileOutputStream;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    // Initialise variables
     public int[] ids = {R.id.username, R.id.password1, R.id.password2};
     private FirebaseAuth mAuth;
     private String username;
@@ -40,10 +42,12 @@ public class RegisterActivity extends AppCompatActivity {
         EditText password1Text = findViewById(ids[1]);
         EditText password2Text = findViewById(ids[2]);
 
+        // Find inputted username and password
         username = usernameText.getText().toString();
         password1 = password1Text.getText().toString();
         String password2 = password2Text.getText().toString();
 
+        // Check if input is correct
         if (username.length() == 0) {
             Log.d("error","Username is empty");
         }
@@ -58,6 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    // Upload a new user to Firebase Authentication
     public void createUser() {
         mAuth.createUserWithEmailAndPassword(username, password1)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -67,8 +72,6 @@ public class RegisterActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("Created", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-
-                            storePassword();
 
                             sendEmail();
 
@@ -87,21 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    public void storePassword() {
-        String filename = "StorePass";
-
-        String fileContents = AES.encrypt(password1, "randomKey"); //TODO HASH PASSWORD better
-        FileOutputStream outputStream;
-
-        try {
-            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write(fileContents.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    // Send verification Email
     public void sendEmail() {
 
         FirebaseUser user = mAuth.getCurrentUser();

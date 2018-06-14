@@ -42,6 +42,10 @@ public class FirebaseHelper extends AES{
     private DatabaseReference database;
     public FirebaseUser user;
     public String userId;
+    public ArrayList<Account> accounts;
+    public ArrayList<Question> questions;
+    public String oldPassword;
+    public String newPassword;
 
     public FirebaseHelper(Context context) {
         this.context = context;
@@ -57,6 +61,7 @@ public class FirebaseHelper extends AES{
 
     }
 
+    // Post question to firebase
     public void addQuestion(Question question) {
 
         DatabaseReference ref = database.child("Questions").push();
@@ -64,14 +69,16 @@ public class FirebaseHelper extends AES{
 
     }
 
+    // Load in questions
     public void getQuestions(CallBack activity) {
 
         delegate = activity;
 
         database.addValueEventListener(new ValueEventListener() {
+            // Load in questions and return them to callback activity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Question> questions = new ArrayList<>();
+                questions = new ArrayList<>();
 
                 for (DataSnapshot child : dataSnapshot.child("Questions").getChildren()) {
                     questions.add(child.getValue(Question.class));
@@ -79,7 +86,7 @@ public class FirebaseHelper extends AES{
 
                 delegate.gotQuestions(questions);
             }
-
+            // Return error
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 delegate.gotQuestionsError(databaseError.getMessage());
@@ -87,11 +94,13 @@ public class FirebaseHelper extends AES{
         });
     }
 
+    // Post account to firebase
     public void addAccount(Account account) {
         DatabaseReference ref = database.child("Accounts").push();
         ref.setValue(account);
     }
 
+    // Load in accounts from firebase and return them
     public void getAccounts(CallBack activity) {
 
         delegate = activity;
@@ -99,7 +108,7 @@ public class FirebaseHelper extends AES{
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Account> accounts = new ArrayList<>();
+                accounts = new ArrayList<>();
 
                 for (DataSnapshot child : dataSnapshot.child("Accounts").getChildren()) {
                     accounts.add(child.getValue(Account.class));
@@ -113,6 +122,98 @@ public class FirebaseHelper extends AES{
                 delegate.gotAccountsError(databaseError.getMessage());
             }
         });
+    }
+
+    // Change encryption of all encrypted files in firebase
+    public void changePassword(String oldPassword, String newPassword) {
+
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                accounts = new ArrayList<>();
+                for (DataSnapshot child : dataSnapshot.child("Accounts").getChildren()) {
+                    accounts.add(child.getValue(Account.class));
+                }
+//
+//                delegate.gotAccounts(accounts);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+//                delegate.gotAccountsError(databaseError.getMessage());
+                Log.e("Error",databaseError.getMessage());
+            }
+        });
+
+        System.out.println(accounts);
+
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                questions = new ArrayList<>();
+
+                for (DataSnapshot child : dataSnapshot.child("Questions").getChildren()) {
+                    questions.add(child.getValue(Question.class));
+                }
+//
+//                delegate.gotQuestions(questions);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+//                delegate.gotQuestionsError(databaseError.getMessage());
+                Log.e("Error",databaseError.getMessage());
+            }
+        });
+
+        System.out.println(questions);
+
+        //TODO UPDATE ENCRYPTION AND UPLOAD IT AGAIN
+    }
+
+    public void changeAccounts() {
+        ArrayList<Account> updatedAccounts = new ArrayList<>();
+        for (Account anAccount : accounts) {
+            String account = anAccount.getAccount();
+            String username = anAccount.getUsername();
+            String password = anAccount.getPassword();
+
+            account = AES.decrypt(account, oldPassword);
+            username = AES.decrypt(username, oldPassword);
+            password = AES.decrypt(password, oldPassword);
+
+            account = AES.encrypt(account, newPassword);
+            username = AES.encrypt(username, newPassword);
+            password = AES.encrypt(password, newPassword);
+
+            Account updatedAccount = new Account(account, username, password);
+            updatedAccounts.add(updatedAccount);
+        }
+
+        // TODO DELETE OLD AND UPLOAD NEW (FIREBASE)
+    }
+
+    public void changeQuestions() {
+        ArrayList<Question> updatedQuestions = new ArrayList<>();
+        for (Question aQuestion : questions) {
+            String question = aQuestion.getQuestion();
+            String answer = aQuestion.getAnswer();
+
+            question = AES.decrypt(question, oldPassword);
+            answer = AES.decrypt(answer, oldPassword);
+
+            question = AES.encrypt(question, newPassword);
+            answer = AES.encrypt(answer, newPassword);
+
+            Question updatedQuestion = new Question(question, answer);
+            updatedQuestions.add(updatedQuestion);
+        }
+
+        // TODO DELETE OLD AND UPLOAD NEW (FIREBASE)
     }
 
 }

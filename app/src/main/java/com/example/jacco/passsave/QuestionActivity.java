@@ -43,6 +43,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
     public String username;
     public String answer;
     public Account account;
+    public String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +54,9 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         filledIn = (Boolean) intent.getSerializableExtra("boolean");
         account = (Account) intent.getSerializableExtra("account");
 
-        foundQuestions = new ArrayList<>();
-
         readPassword();
+
+        foundQuestions = new ArrayList<>();
 
         if (filledIn) {
             FirebaseHelper helper = new FirebaseHelper(this);
@@ -86,6 +87,12 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         for (Question aQuestion : questions) {
             usedQuestions.add(aQuestion.getQuestion());
         }
+
+
+        for (Question aQuestion : questions) {
+            System.out.println(aQuestion.getAnswer());
+        }
+
 
         Spinner spinner = findViewById(R.id.question);
 
@@ -142,15 +149,21 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         String question = spinner.getSelectedItem().toString();
 
         EditText answerText = findViewById(R.id.answer);
-        String givenAnswer = answerText.getText().toString();
+        String givenAnswer = AES.encrypt(answerText.getText().toString(), password);
 
         if (filledIn) {
+
+            givenAnswer = givenAnswer.replace("\n", "");
 
             for (Question aQuestion : foundQuestions) {
                 if (aQuestion.getQuestion().equals(question)) {
                     answer = aQuestion.getAnswer();
+
+                    answer = answer.replace("\n", "");
                 }
             }
+
+            System.out.println("[" + givenAnswer + "],[" + answer + "]");
 
             if (givenAnswer.equals(answer)) {
 
@@ -195,7 +208,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
             String[] info = temp.split("\\s+");
 
-            String password = info[0];
+            password = info[0];
 
             //string temp contains all the data of the file.
             fin.close();

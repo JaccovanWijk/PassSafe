@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -21,8 +22,16 @@ import com.google.firebase.database.Logger;
 
 import java.io.FileOutputStream;
 
+/*
+* TODO AUTHSTATE
+* TODO QUESTIONS ACCEPT EMPTY ANSWER
+* TODO TITLE ABOVE ACCOUNTS
+* TODO TRANSFER LOG INTO TOASTS
+*/
+
 public class LoginActivity extends AppCompatActivity {
-    // TODO PROGRESSBAR FOR USER INTERFACE
+
+    // initialise variables
     public int[] ids = {R.id.username, R.id.password};
     private FirebaseAuth mAuth;
     private String username;
@@ -32,11 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        /*
-        * TODO IS DIT VEILIG GENOEG? NEEEEEE, versleutel ook vraag, antwoord en usernames
-        * TODO AUTHSTATE
-        * TODO ZORG DAT HIJ NA DE VRAAG BIJ QUESTIONACTIVITY PAS DE USER OPSLAAT ZODAT JE GEEN USER AANMAAKT ZONDER VRAAG!
-        */
+
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -47,11 +52,13 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
     }
 
+    // Listen to registerbutton and direct to register activity if it's pressed
     public void registerClicked(View view) {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
     }
 
+    // Listen to loginbutton and check if input is correct
     public void loginClicked(View view) {
         EditText usernameText = findViewById(ids[0]);
         EditText passwordText = findViewById(ids[1]);
@@ -59,11 +66,11 @@ public class LoginActivity extends AppCompatActivity {
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();
 
-        //TODO CHECK IF USERS EMAIL IS VERIFICATED
-
+        // Check if nothing is left empty
         if (username.length() == 0 || password.length() == 0) {
             Log.d("error", "something is empty");
         } else {
+            // Check if input is correct
             mAuth.signInWithEmailAndPassword(username, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -73,12 +80,14 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d("Sign in", "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
 
+                                // Check if user verified his mail
                                 if (!user.isEmailVerified()) {
                                     Context context = getApplicationContext();
                                     int duration = Toast.LENGTH_LONG;
                                     String text = "E-Mail not verified!";
                                     Toast.makeText(context, text, duration).show();
                                 } else {
+                                    // Store password in background
                                     storePassword();
 
                                     Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
@@ -87,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w("Sign out", "signInWithEmail:failure", task.getException());
-                                Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                Toast.makeText(LoginActivity.this, "Wrong username/password.",
                                         Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -95,10 +104,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // Store encrypted password in a file
     public void storePassword() {
         String filename = "StorePass";
 
-        String fileContents = AES.encrypt(password, "randomKey"); //TODO HASH PASSWORD better
+        byte[] bytesEncoded = Base64.encode(password.getBytes(), Base64.DEFAULT);
+        String fileContents = new String(bytesEncoded);
         FileOutputStream outputStream;
 
         try {
@@ -113,6 +124,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Empty history of EditText
         EditText usernameText = findViewById(ids[0]);
         EditText passwordText = findViewById(ids[1]);
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
 
         questions = new ArrayList<>();
 
-//        readPassword();
+        readPassword();
 
         TextView usernameText = findViewById(R.id.username);
         usernameText.setText(username);
@@ -143,9 +144,14 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         String newPassword1 = newPassword1Text.getText().toString();
         String newPassword2 = newPassword2Text.getText().toString();
 
+        byte[] bytesEncoded = Base64.encode(newPassword1.getBytes(), Base64.DEFAULT);
+        String encodedPassword = new String(bytesEncoded);
+
+        encodedPassword = encodedPassword.replace("\n", "").replace("\r", "");
+
         if(oldPassword.length() == 0 || newPassword1.length() == 0 || newPassword2.length() == 0) {
             Log.d("Error", "something is empty!");
-        } else if(!oldPassword.equals(AES.decrypt(password, "randomKey"))) {
+        } else if(!password.equals(encodedPassword)) {
             Log.d("Error", "Wrong password!");
         } else if(!newPassword1.equals(newPassword2)) {
             Log.d("Error", "New passwords do not match!");
@@ -169,6 +175,9 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
             oldPasswordText.setText("");
             newPassword1Text.setText("");
             newPassword2Text.setText("");
+
+            FirebaseHelper helper = new FirebaseHelper(this);
+            helper.changePassword(password, newPassword1);
         }
     }
 
@@ -177,7 +186,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         String question = spinner.getSelectedItem().toString();
 
         EditText answerText = findViewById(R.id.answer);
-        String answer = answerText.getText().toString();
+        String answer = AES.encrypt(answerText.getText().toString(), password);
 
         Question newQuestion = new Question(question,answer);
 
@@ -207,7 +216,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
 
             String[] info = temp.split("\\s+");
 
-            username = info[0];
+            password = info[0];
 
             //string temp contains all the data of the file.
             fin.close();

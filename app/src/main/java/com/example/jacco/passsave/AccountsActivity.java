@@ -35,6 +35,7 @@ import java.util.ArrayList;
 
 public class AccountsActivity extends AppCompatActivity implements FirebaseHelper.CallBack {
 
+    // Initialise variables
     public String password;
     public ArrayList<Account> accounts;
     public DatabaseReference myRef;
@@ -50,19 +51,24 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
 
         readPassword();
 
+        // Get user id
         String userId = "";
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             userId = user.getUid();
         }
 
+        // Set right reference
         myRef = FirebaseDatabase.getInstance().getReference(userId);
+
         accounts = new ArrayList<>();
 
+        // Set listeners on listview
         listView = findViewById(R.id.listview);
         listView.setOnItemClickListener(new ListClickListener());
         listView.setOnItemLongClickListener(new ListLongClickListener());
 
+        // Call FirebaseHelper to load in accounts
         FirebaseHelper helper = new FirebaseHelper(this);
         helper.getAccounts(this);
     }
@@ -90,12 +96,14 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         return super.onOptionsItemSelected(item);
     }
 
+    // Listen for single clicks on listview an direct to next activity
     private class ListClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             TextView accountText = view.findViewById(R.id.account);
             String account = accountText.getText().toString();
 
+            // Find clicked account
             for (Account anAccount : accounts) {
                 if(anAccount.getAccount().equals(account)) {
                     selectedAccount = anAccount;
@@ -109,6 +117,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         }
     }
 
+    // Listen for long clicks
     private class ListLongClickListener implements AdapterView.OnItemLongClickListener {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -117,21 +126,24 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
 
             areYouSure();
 
+
             return true;
         }
     }
 
+    // Listen if addbutton is clicked and direct to next activity
     public void addButtonClicked(View view) {
-        // go to next activity
         Intent intent = new Intent(AccountsActivity.this, NewAccountActivity.class);
         startActivity(intent);
     }
 
+    // Update listview with updated info
     public void updateData() {
         adapter = new AccountsAdapter(this, accounts);
         listView.setAdapter(adapter);
     }
 
+    // FirebaseHelper CallBack functions
     @Override
     public void gotQuestions(ArrayList<Question> questions) {
         Context context = getApplicationContext();
@@ -152,6 +164,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         // log error
         Log.e("ERROR", message);
     }
+    // Receive accounts and update listview
     @Override
     public void gotAccounts(ArrayList<Account> accounts) {
         this.accounts = accounts;
@@ -169,6 +182,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         Log.e("ERROR", message);
     }
 
+    // Create popupscreen to confirm deletion account
     public void areYouSure() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -187,6 +201,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         builder.show();
     }
 
+    // Delete a account from Firebase
     public void deleteItem() {
         Query query = myRef.child("Accounts").orderByChild("account").equalTo(deleteAccount);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -204,6 +219,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         });
     }
 
+    // Read password from saved file
     public void readPassword() {
 
         try {
@@ -226,6 +242,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         }
     }
 
+    // When returning to this activity without logging in go to loginactivity
     @Override
     protected void onResume() {
         super.onResume();

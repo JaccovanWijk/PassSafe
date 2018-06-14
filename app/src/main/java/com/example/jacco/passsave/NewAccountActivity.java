@@ -27,6 +27,7 @@ import java.util.Random;
 
 public class NewAccountActivity extends AppCompatActivity implements FirebaseHelper.CallBack{
 
+    public static String encrypted;
     int[] ids = {R.id.account, R.id.username, R.id.password};
     String password;
     String[] letters = {
@@ -117,14 +118,13 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         String newPassword = passwordText.getText().toString();
         String newUsername = usernameText.getText().toString();
 
-        //TODO HIJ ACCEPTEERT GEEN WACHTWOORDEN VAN < 8 IN DE ENCRIPTIE, WHY NOT EN HOE ZOU IK DIT KUNNEN ONTWIJKEN
-//        if (newPassword.length() < 8) {
-//            newPassword += "password";
-//        }
+        encrypted = AES.encrypt(newPassword,password);
+
+        //TODO CHECK OF HIJ ALLES WEL ACCEPTEERT
 
         if (account.length() == 0 || newUsername.length() == 0 || newPassword.length() == 0) {
             Log.d("error", "Something is empty");
-        } else if (newPassword.length() < 8) {
+        } else if (newPassword.length() < 7) {
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
             String text = "Password too short!";
@@ -134,8 +134,13 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
             Account newAccount = new Account(account, newUsername, newPassword);
 
             newAccount.setAccount(account);
-            newAccount.setUsername(newUsername);
+            newAccount.setUsername(AES.encrypt(newUsername,password));
             newAccount.setPassword(AES.encrypt(newPassword, password));
+
+            String test = AES.encrypt(newPassword, password);
+            String test2 = AES.decrypt(test, password);
+
+            System.out.println("[" + newPassword + "],[" + test + "],[" + test2 + "]");
 
             FirebaseHelper helper = new FirebaseHelper(this);
             helper.addAccount(newAccount);
@@ -147,8 +152,8 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         }
     }
 
-
     public void randomPasswordClicked(View view) {
+        //TODO WAAROM WERKT ENCRIPTIE NIET MET RANDOM WACHTWOORD
         EditText passwordText = findViewById(ids[2]);
         String randomPassword = "";
 
@@ -158,8 +163,8 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
             randomPassword += random;
         }
 
-        password = randomPassword;
-        passwordText.setText(password);
+        String aPassword = randomPassword;
+        passwordText.setText(aPassword);
     }
 
     public void visibilityClicked(View view) {

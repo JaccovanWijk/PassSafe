@@ -37,7 +37,7 @@ public class PasswordActivity extends AppCompatActivity {
 
         System.out.println(AES.decrypt(account.getPassword(), password));
 
-        usernameText.setText("Your username is: " + account.getUsername());
+        usernameText.setText("Your username is: " + AES.decrypt(account.getUsername(), password));
         passwordText.setText("Your password is: " + AES.decrypt(account.getPassword(), password));
     }
 
@@ -62,14 +62,6 @@ public class PasswordActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void returnClicked(View view) {
-
-        Intent intent = new Intent(PasswordActivity.this, AccountsActivity.class);
-        startActivity(intent);
-
-        finish();
     }
 
     public void readPassword() {
