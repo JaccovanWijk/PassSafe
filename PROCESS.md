@@ -8,7 +8,7 @@ After finishing the designdocument yesterday I started to realise what I had in 
 
 # Day 2 08 - 06 - 2018
 
-Today I presented my idea and got some feedback, but all minor things.
+Today I presented my idea and got some feedback, but all minor things. I also realised that using the ```FirebaseHelper``` will clean up my code and prefent dublicate code.
 
 # Day 3 11 - 06 - 2018
 * I started out trying to fix my firebase which been irritating me for the past few days.
@@ -20,3 +20,7 @@ After some problems with nullpointers I figured out where the problem was (Upper
 # Day 5 13 - 06 - 2018
 Today I faced very little problems. I fixed the last nullpointers I could find and I made the login only possible with a verified email. I pushed a working version to git as my alpha v1.1.
 Sometimes my dectypt function does not work. I can't figure out why and what's causing it. Forcing the bug to appear does not work so I hope it's a one time errer.
+**UPDATE** Random passwords can't be decrypted and I can't figure out why?
+
+# Day 6 14 - 06 - 2018
+Today I made sure not only the passwords but also the username and the answers are encrypted on firebase. 
