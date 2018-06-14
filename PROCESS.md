@@ -23,4 +23,4 @@ Sometimes my dectypt function does not work. I can't figure out why and what's c
 **UPDATE** Random passwords can't be decrypted and I can't figure out why?
 
 # Day 6 14 - 06 - 2018
-Today I made sure not only the passwords but also the username and the answers are encrypted on firebase. 
+Today I made sure not only the passwords but also the username and the answers are encrypted on firebase. The decryption problem I faced yesterday was caused by a dublicate name. Took some time for me to find this one (Thanks Renske). After that i played with layout and coloring for the most part.
