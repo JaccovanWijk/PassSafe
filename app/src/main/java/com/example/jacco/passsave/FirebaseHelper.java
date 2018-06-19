@@ -20,6 +20,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Jacco on 6-6-2018.
@@ -32,9 +34,9 @@ public class FirebaseHelper extends AES{
 
     public interface CallBack {
         void gotQuestions(ArrayList<Question> questions);
-        void gotQuestionsError(String message);
         void gotAccounts(ArrayList<Account> accounts);
-        void gotAccountsError(String message);
+        void gotKey(String key);
+        void gotError(String message);
     }
 
     private Context context;
@@ -44,6 +46,7 @@ public class FirebaseHelper extends AES{
     public String userId;
     public ArrayList<Account> accounts;
     public ArrayList<Question> questions;
+    public String key;
     public String oldPassword;
     public String newPassword;
 
@@ -89,7 +92,7 @@ public class FirebaseHelper extends AES{
             // Return error
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                delegate.gotQuestionsError(databaseError.getMessage());
+                delegate.gotError(databaseError.getMessage());
             }
         });
     }
@@ -119,7 +122,30 @@ public class FirebaseHelper extends AES{
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                delegate.gotAccountsError(databaseError.getMessage());
+                delegate.gotError(databaseError.getMessage());
+            }
+        });
+    }
+
+    public void getKey(CallBack activity) {
+
+        delegate = activity;
+
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                key = "";
+
+                for (DataSnapshot child : dataSnapshot.child("Key").getChildren()) {
+                    key = child.getValue(String.class);
+                }
+
+                delegate.gotKey(key);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                delegate.gotError(databaseError.getMessage());
             }
         });
     }
@@ -129,6 +155,8 @@ public class FirebaseHelper extends AES{
 
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
+        accounts = new ArrayList<>();
+        questions = new ArrayList<>();
 
         database.addValueEventListener(new ValueEventListener() {
             @Override
@@ -172,7 +200,10 @@ public class FirebaseHelper extends AES{
 
         System.out.println(questions);
 
-        //TODO UPDATE ENCRYPTION AND UPLOAD IT AGAIN
+        changeAccounts();
+        changeQuestions();
+
+
     }
 
     public void changeAccounts() {
@@ -195,6 +226,15 @@ public class FirebaseHelper extends AES{
         }
 
         // TODO DELETE OLD AND UPLOAD NEW (FIREBASE)
+//        Map<String, Object> childUpdates = new HashMap<>();
+//        childUpdates.put("Accounts", updatedAccounts);
+//
+//        database.updateChildren(childUpdates);
+        DatabaseReference ref = database.child("Accounts").push();
+        ref.removeValue();
+        for (Account account : updatedAccounts) {
+            ref.setValue(account);
+        }
     }
 
     public void changeQuestions() {
@@ -214,6 +254,23 @@ public class FirebaseHelper extends AES{
         }
 
         // TODO DELETE OLD AND UPLOAD NEW (FIREBASE)
+        DatabaseReference ref = database.child("Questions").push();
+        ref.removeValue();
+        for (Question question : updatedQuestions) {
+            ref.setValue(question);
+        }
     }
 
+    public void addKey(String key, String password) {
+        // Upload key
+
+        String userId = "";
+//      FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            userId = user.getUid();
+
+            DatabaseReference ref = database.child("Key").push();
+            ref.setValue(AES.encrypt(key,password));
+        }
+    }
 }

@@ -1,6 +1,8 @@
 package com.example.jacco.passsave;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -28,6 +32,15 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String username;
     private String password1;
+    private String key;
+    private Context context = this;
+    String[] letters = {
+            "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P",
+            "Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f",
+            "g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v",
+            "w","x","y","z","0","1","2","3","4","5","6","7","8","9","+","/",
+            "!","@","#","$","%","&"};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +71,19 @@ public class RegisterActivity extends AppCompatActivity {
             Log.d("error", "password1 != password2");
         }
         else {
-            createUser();
+
+            key = createKey();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Your activation key is: " + key + "\nThis key is needed for changing" +
+                               " your password. \nNote this key and make sure not to lose it!")
+                    .setPositiveButton("Next", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // create User
+                            createUser();
+                        }
+                    });
+            builder.show();
         }
     }
 
@@ -75,6 +100,10 @@ public class RegisterActivity extends AppCompatActivity {
 
                             sendEmail();
 
+                            // TODO HIJ POST KEY BIJ DE VORIGE USER????
+                            FirebaseHelper helper = new FirebaseHelper(context);
+                            helper.addKey(key, password1);
+
                             Intent intent = new Intent(RegisterActivity.this, QuestionActivity.class);
                             intent.putExtra("boolean", false);
                             startActivity(intent);
@@ -88,6 +117,17 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    // Create random key of size 24
+    public String createKey() {
+        String key = "";
+        for (int i = 0, n = 24; i < n; i++) {
+            int idx = new Random().nextInt(letters.length);
+            String random = letters[idx];
+            key += random;
+        }
+        return key;
     }
 
     // Send verification Email

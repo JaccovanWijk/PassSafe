@@ -7,20 +7,12 @@
     android:orientation="vertical"
     tools:context="com.example.jacco.passsave.LoginActivity">
 
-    <Button
-        android:id="@+id/register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:onClick="registerClicked"
-        android:text="Register"
-        android:textSize="20sp" />
-
     <ImageView
         android:id="@+id/icon"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
         android:adjustViewBounds="false"
         android:cropToPadding="false"
         app:srcCompat="@drawable/lock_icon" />
@@ -64,6 +56,13 @@
             android:layout_height="wrap_content"
             android:onClick="loginClicked"
             android:text="Log in" />
+
+        <Button
+            android:id="@+id/forgotPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="forgotPasswordClicked"
+            android:text="Forgot Password" />
 
     </LinearLayout>
 

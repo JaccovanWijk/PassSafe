@@ -53,6 +53,7 @@ public class PasswordActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.LogOut:
                 Intent intent = new Intent(PasswordActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
                 return true;

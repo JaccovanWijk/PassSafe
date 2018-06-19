@@ -56,7 +56,7 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         Log.e("ERROR", "You're not supposed to be here!!");
     }
     @Override
-    public void gotQuestionsError(String message) {
+    public void gotError(String message) {
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_LONG;
         String text = "Something went wrong...";
@@ -76,14 +76,14 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         Log.e("ERROR", "you're not supposed to be here!!");
     }
     @Override
-    public void gotAccountsError(String message) {
+    public void gotKey(String key) {
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_LONG;
         String text = "Something went wrong...";
         Toast.makeText(context, text, duration).show();
 
         // log error
-        Log.e("ERROR", message);
+        Log.e("ERROR", "You're not supposed to be here!");
     }
 
     // add menu
@@ -98,6 +98,7 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         switch(item.getItemId()) {
             case R.id.LogOut:
                 Intent intent = new Intent(NewAccountActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
                 return true;

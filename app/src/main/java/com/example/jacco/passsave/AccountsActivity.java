@@ -85,6 +85,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         switch(item.getItemId()) {
             case R.id.LogOut:
                 Intent intent = new Intent(AccountsActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
                 return true;
@@ -126,7 +127,6 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
 
             areYouSure();
 
-
             return true;
         }
     }
@@ -155,7 +155,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         Log.e("ERROR", "You're not supposed to be here!");
     }
     @Override
-    public void gotQuestionsError(String message) {
+    public void gotError(String message) {
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_LONG;
         String text = "Something went wrong...";
@@ -172,14 +172,14 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         updateData();
     }
     @Override
-    public void gotAccountsError(String message) {
+    public void gotKey(String key) {
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_LONG;
         String text = "Something went wrong...";
         Toast.makeText(context, text, duration).show();
 
         // log error
-        Log.e("ERROR", message);
+        Log.e("ERROR", "You're not supposed to be here!");
     }
 
     // Create popupscreen to confirm deletion account

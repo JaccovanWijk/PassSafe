@@ -1,14 +1,22 @@
 package com.example.jacco.passsave;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,17 +24,23 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
-* TODO AUTHSTATE
-* TODO QUESTIONS ACCEPT EMPTY ANSWER
-* TODO TITLE ABOVE ACCOUNTS
+* TODO AUTHSTATE IN ONRESUME
 * TODO TRANSFER LOG INTO TOASTS
+* TODO MAKE UP MORE QUESTIONS
+* TODO CREATE ACTIVATION KEY FOR RESETTING PASSWORD
+* TODO SAVE  EMAIL AFTER LOGIN IN PREFERENCES
 */
 
 public class LoginActivity extends AppCompatActivity {
@@ -36,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String username;
     private String password;
+    private String key;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +60,29 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
     }
 
+    // add menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.register_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.register:
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-    }
-
-    // Listen to registerbutton and direct to register activity if it's pressed
-    public void registerClicked(View view) {
-        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-        startActivity(intent);
     }
 
     // Listen to loginbutton and check if input is correct
@@ -119,6 +146,82 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void forgotPasswordClicked(View view) {
+        // Upload key
+        FirebaseDatabase firebase = FirebaseDatabase.getInstance();
+
+        String userId = "";
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            userId = user.getUid();
+        } else {
+            //TODO ERROR
+        }
+
+        DatabaseReference database = firebase.getReference(userId);
+
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot userKey: dataSnapshot.child("Key").getChildren()) {
+                    key = userKey.getValue(String.class);
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        LayoutInflater li = LayoutInflater.from(this);
+        View promptsView = li.inflate(R.layout.prompts, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.key);
+        final EditText emailInput = (EditText) promptsView
+                .findViewById(R.id.email);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                key = userInput.getText().toString();
+                                username = emailInput.getText().toString();
+
+                                checkKey();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
+
+    }
+
+    public void checkKey() {
+        //TODO CHECK IF USERNAME AND KEY ADD UP
+
+        System.out.println(key);
     }
 
     @Override
