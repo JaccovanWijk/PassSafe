@@ -116,6 +116,8 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         //TODO DO SOMETHING WITH KEY
         key = aKey;
 
+        //TEST
+
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.prompts2, null);
 
