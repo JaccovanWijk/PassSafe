@@ -24,3 +24,12 @@ Sometimes my dectypt function does not work. I can't figure out why and what's c
 
 # Day 6 14 - 06 - 2018
 Today I made sure not only the passwords but also the username and the answers are encrypted on firebase. The decryption problem I faced yesterday was caused by a dublicate name. Took some time for me to find this one (Thanks Renske). After that i played with layout and coloring for the most part.
+
+# Day 7 18 - 06 - 2018
+Today I struggled with changing the password. Changing the password itself is easy but all the encrypted data on the firebase must be decrypted and encrypted with the new password. In theory my code should work, but i get some errors.
+
+# Day 8 19 - 06 - 2018
+I'm still stuck at the same point as yesterday. I can't find the source of my problem so fixing it is a pain. 
+
+# Day 9 20 - 06 - 2018
+Third day in a row on this problem. I fixed some minor things that I encountered while searching while searching for the isue. I determined that the problem must be with dublicate names, because the answer of a question is overwritten without my consent. 
