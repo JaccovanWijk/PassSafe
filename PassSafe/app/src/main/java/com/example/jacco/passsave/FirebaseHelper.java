@@ -127,6 +127,7 @@ public class FirebaseHelper extends AES{
         });
     }
 
+    // Load in key from firebase and return it
     public void getKey(CallBack activity) {
 
         delegate = activity;
@@ -153,11 +154,14 @@ public class FirebaseHelper extends AES{
     // Change encryption of all encrypted files in firebase
     public void changePassword(String oldPassword, String newPassword) {
 
+        // Update passwords
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
+
         accounts = new ArrayList<>();
         questions = new ArrayList<>();
 
+        // Load in accounts
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -177,8 +181,7 @@ public class FirebaseHelper extends AES{
             }
         });
 
-        System.out.println(accounts);
-
+        // Loud in questions
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -198,20 +201,41 @@ public class FirebaseHelper extends AES{
             }
         });
 
-        System.out.println(questions);
+        // Load in key
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                key = "";
+
+                for (DataSnapshot child : dataSnapshot.child("Key").getChildren()) {
+                    key = child.getValue(String.class);
+                }
+//
+//                delegate.gotKey(key);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+//                delegate.gotError(databaseError.getMessage());
+            }
+        });
 
         changeAccounts();
         changeQuestions();
+        changeKey();
 
 
     }
 
+    // Decrypt accounts with old password and encrypt with new password
     public void changeAccounts() {
         ArrayList<Account> updatedAccounts = new ArrayList<>();
         for (Account anAccount : accounts) {
             String account = anAccount.getAccount();
             String username = anAccount.getUsername();
             String password = anAccount.getPassword();
+
+            System.out.println(account + "SDJFLKNSDFKSDFLSDFNLSDKF");
 
             account = AES.decrypt(account, oldPassword);
             username = AES.decrypt(username, oldPassword);
@@ -225,16 +249,13 @@ public class FirebaseHelper extends AES{
             updatedAccounts.add(updatedAccount);
         }
 
-        // TODO DELETE OLD AND UPLOAD NEW (FIREBASE)
-//        Map<String, Object> childUpdates = new HashMap<>();
-//        childUpdates.put("Accounts", updatedAccounts);
-//
-//        database.updateChildren(childUpdates);
+        // Upload new encrypted data
         DatabaseReference ref = database.child("Accounts").push();
         ref.removeValue();
         for (Account account : updatedAccounts) {
             ref.setValue(account);
         }
+
     }
 
     public void changeQuestions() {
@@ -243,8 +264,12 @@ public class FirebaseHelper extends AES{
             String question = aQuestion.getQuestion();
             String answer = aQuestion.getAnswer();
 
+            System.out.println("/////" + question + "1????");
+
             question = AES.decrypt(question, oldPassword);
             answer = AES.decrypt(answer, oldPassword);
+
+            System.out.println(answer + "??????????????????????????????");
 
             question = AES.encrypt(question, newPassword);
             answer = AES.encrypt(answer, newPassword);
@@ -253,7 +278,7 @@ public class FirebaseHelper extends AES{
             updatedQuestions.add(updatedQuestion);
         }
 
-        // TODO DELETE OLD AND UPLOAD NEW (FIREBASE)
+        // Upload encrypted data
         DatabaseReference ref = database.child("Questions").push();
         ref.removeValue();
         for (Question question : updatedQuestions) {
@@ -261,16 +286,20 @@ public class FirebaseHelper extends AES{
         }
     }
 
+    public void changeKey() {
+        key = AES.decrypt(key,oldPassword);
+
+        key = AES.encrypt(key,newPassword);
+
+        // Upload encrypted key
+        DatabaseReference ref = database.child("Key").push();
+        ref.removeValue();
+        ref.setValue(key);
+    }
+
     public void addKey(String key, String password) {
         // Upload key
-
-        String userId = "";
-//      FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            userId = user.getUid();
-
-            DatabaseReference ref = database.child("Key").push();
-            ref.setValue(AES.encrypt(key,password));
-        }
+        DatabaseReference ref = database.child("Key").push();
+        ref.setValue(AES.encrypt(key,password));
     }
 }

@@ -39,8 +39,10 @@ import java.util.List;
 * TODO AUTHSTATE IN ONRESUME
 * TODO TRANSFER LOG INTO TOASTS
 * TODO MAKE UP MORE QUESTIONS
-* TODO CREATE ACTIVATION KEY FOR RESETTING PASSWORD
 * TODO SAVE  EMAIL AFTER LOGIN IN PREFERENCES
+* TODO FIX GIT
+* TODO MAKE SURE ACCOUNTSACTIVITY CAN ONLY EXIST ONCE
+* TODO WHEN ADDING QUESTION ASK FOR PASSWORD
 */
 
 public class LoginActivity extends AppCompatActivity {
@@ -108,7 +110,8 @@ public class LoginActivity extends AppCompatActivity {
                                 FirebaseUser user = mAuth.getCurrentUser();
 
                                 // Check if user verified his mail
-                                if (!user.isEmailVerified()) {
+                                //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                if (user.isEmailVerified()) {
                                     Context context = getApplicationContext();
                                     int duration = Toast.LENGTH_LONG;
                                     String text = "E-Mail not verified!";

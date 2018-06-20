@@ -100,9 +100,12 @@ public class RegisterActivity extends AppCompatActivity {
 
                             sendEmail();
 
-                            // TODO HIJ POST KEY BIJ DE VORIGE USER????
+                            byte[] bytesOldPassword = Base64.encode(password1.getBytes(), Base64.DEFAULT);
+                            String encodedPassword = new String(bytesOldPassword);
+                            encodedPassword = encodedPassword.replace("\n", "").replace("\r", "");
+
                             FirebaseHelper helper = new FirebaseHelper(context);
-                            helper.addKey(key, password1);
+                            helper.addKey(key, encodedPassword);
 
                             Intent intent = new Intent(RegisterActivity.this, QuestionActivity.class);
                             intent.putExtra("boolean", false);
@@ -127,6 +130,8 @@ public class RegisterActivity extends AppCompatActivity {
             String random = letters[idx];
             key += random;
         }
+        key = "hoi";
+        //TODO MAKE KEY RANDOM AGAIN
         return key;
     }
 

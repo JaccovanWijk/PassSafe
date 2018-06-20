@@ -16,12 +16,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".AccountsActivity" />
-        <activity android:name=".NewAccountActivity" />
-        <activity android:name=".QuestionActivity" />
-        <activity android:name=".PasswordActivity" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".RegisterActivity"
+            android:launchMode= "singleInstance" />/>
+        <activity android:name=".AccountsActivity"
+            android:launchMode= "singleInstance" />/>
+        <activity android:name=".NewAccountActivity"
+            android:launchMode= "singleInstance" />/>
+        <activity android:name=".QuestionActivity"
+            android:launchMode= "singleInstance" />/>
+        <activity android:name=".PasswordActivity"
+            android:launchMode= "singleInstance" />/>
+        <activity android:name=".SettingsActivity"
+            android:launchMode= "singleInstance" ></activity>
     </application>
 
 </manifest>

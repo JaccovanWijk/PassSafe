@@ -141,26 +141,33 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         String question = textView.getText().toString();
 
         EditText answerText = findViewById(R.id.answer);
-        String givenAnswer = AES.encrypt(answerText.getText().toString(), password);
+        String givenAnswer = answerText.getText().toString();
 
         if (givenAnswer.length() == 0) {
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
             String text = "Answer can't be empty!";
             Toast.makeText(context, text, duration).show();
+
         } else {
 
-            if (filledIn) {
+//            givenAnswer = AES.encrypt(givenAnswer, password);
+//            givenAnswer = givenAnswer.replace("\n", "");
 
-                givenAnswer = givenAnswer.replace("\n", "");
+            if (filledIn) {
 
                 for (Question aQuestion : foundQuestions) {
                     if (aQuestion.getQuestion().equals(question)) {
                         answer = aQuestion.getAnswer();
 
-                        answer = answer.replace("\n", "");
+//                        answer = answer.replace("\n", "");
                     }
                 }
+
+                answer = AES.decrypt(answer, password);
+
+
+                System.out.println("[" + givenAnswer + "],[" + answer + "]");
 
                 if (givenAnswer.equals(answer)) {
 
@@ -207,7 +214,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
             String[] info = temp.split("\\s+");
 
             password = info[0];
-
+            Log.d("PASS!!!!!!!!!!!!!!", password + "]");
             //string temp contains all the data of the file.
             fin.close();
         } catch(Exception e) {

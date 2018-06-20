@@ -116,8 +116,6 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         //TODO DO SOMETHING WITH KEY
         key = aKey;
 
-        //TEST
-
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.prompts2, null);
 
@@ -137,37 +135,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
                             public void onClick(DialogInterface dialog,int id) {
                                 String inputKey = userInput.getText().toString();
 
-                                if (key.equals(inputKey)) {
-
-                                    //TODO WERKT NOG NIET
-                                    user.updatePassword(newPassword1)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Log.d("Change", "User password updated.");
-                                                    }
-                                                }
-                                            });
-
-                                    Context context = getApplicationContext();
-                                    int duration = Toast.LENGTH_LONG;
-                                    String text = "Changed password!";
-                                    Toast.makeText(context, text, duration).show();
-
-                                    EditText oldPasswordText = findViewById(R.id.oldPassword);
-                                    EditText newPassword1Text = findViewById(R.id.newPassword1);
-                                    EditText newPassword2Text = findViewById(R.id.newPassword2);
-
-                                    oldPasswordText.setText("");
-                                    newPassword1Text.setText("");
-                                    newPassword2Text.setText("");
-
-                                    storePassword(newPassword1);
-
-                                    FirebaseHelper helper = new FirebaseHelper(context);
-                                    helper.changePassword(password, newPassword1);
-                                }
+                                checkKey(inputKey);
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -182,6 +150,54 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
 
         // show it
         alertDialog.show();
+    }
+
+    public void checkKey(String inputKey) {
+
+        EditText oldPasswordText = findViewById(R.id.oldPassword);
+        EditText newPassword1Text = findViewById(R.id.newPassword1);
+        EditText newPassword2Text = findViewById(R.id.newPassword2);
+
+        System.out.println("[" + password + "],[" + AES.encrypt(inputKey,password) + "],[" + key + "]");
+
+        if (key.equals(AES.encrypt(inputKey,password))) {
+
+            //TODO WERKT NOG NIET
+            user.updatePassword(newPassword1)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("Change", "User password updated.");
+                            }
+                        }
+                    });
+
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            String text = "Changed password!";
+            Toast.makeText(context, text, duration).show();
+
+            oldPasswordText.setText("");
+            newPassword1Text.setText("");
+            newPassword2Text.setText("");
+
+            storePassword(newPassword1);
+
+            FirebaseHelper helper = new FirebaseHelper(context);
+            helper.changePassword(password, newPassword1);
+        }
+        else {
+
+            oldPasswordText.setText("");
+            newPassword1Text.setText("");
+            newPassword2Text.setText("");
+
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            String text = "Wrong Key!";
+            Toast.makeText(context, text, duration).show();
+        }
     }
 
     @Override
@@ -230,27 +246,6 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         } else if (newPassword1.length() < 7) {
             Log.d("Error", "New password is too small!");
         } else {
-            //TODO SAVE NEW PASSWORD
-//            user.updatePassword(newPassword1)
-//                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<Void> task) {
-//                            if (task.isSuccessful()) {
-//                                Log.d("Change", "User password updated.");
-//                            }
-//                        }
-//                    });
-//
-//            Context context = getApplicationContext();
-//            int duration = Toast.LENGTH_LONG;
-//            String text = "Changed password!";
-//            Toast.makeText(context, text, duration).show();
-
-//            oldPasswordText.setText("");
-//            newPassword1Text.setText("");
-//            newPassword2Text.setText("");
-//
-//            storePassword(newPassword1);
 
             FirebaseHelper helper = new FirebaseHelper(this);
             helper.getKey(this);
@@ -259,24 +254,34 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
 
     public void addQuestionButtonClicked(View view) {
         Spinner spinner = findViewById(R.id.spinner);
-        String question = spinner.getSelectedItem().toString();
+        Object questionObject = spinner.getSelectedItem();
 
-        EditText answerText = findViewById(R.id.answer);
-        String answer = AES.encrypt(answerText.getText().toString(), password);
+        if (questionObject != null) {
 
-        Question newQuestion = new Question(question,answer);
+            String question = questionObject.toString();
 
-        questions.add(newQuestion);
+            EditText answerText = findViewById(R.id.answer);
+            String answer = AES.encrypt(answerText.getText().toString(), password);
 
-        FirebaseHelper helper = new FirebaseHelper(this);
-        helper.addQuestion(newQuestion);
+            Question newQuestion = new Question(question, answer);
 
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Question added!";
-        Toast.makeText(context, text, duration).show();
+            questions.add(newQuestion);
 
-        gotQuestions(questions);
+            FirebaseHelper helper = new FirebaseHelper(this);
+            helper.addQuestion(newQuestion);
+
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            String text = "Question added!";
+            Toast.makeText(context, text, duration).show();
+
+            gotQuestions(questions);
+        } else {
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            String text = "sfsdfs";
+            Toast.makeText(context, text, duration).show();
+        }
     }
 
     public void readPassword() {
