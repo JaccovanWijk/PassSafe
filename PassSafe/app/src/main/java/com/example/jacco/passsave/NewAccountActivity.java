@@ -27,15 +27,14 @@ import java.util.Random;
 
 public class NewAccountActivity extends AppCompatActivity implements FirebaseHelper.CallBack{
 
-    public static String encrypted;
     int[] ids = {R.id.account, R.id.username, R.id.password};
-    String password;
-    String[] letters = {
-            "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P",
-            "Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f",
-            "g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v",
-            "w","x","y","z","0","1","2","3","4","5","6","7","8","9","+","/",
-            "!","@","#","$","%","&"};
+    public String password;
+    public String[] letters = {
+                            "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P",
+                            "Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f",
+                            "g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v",
+                            "w","x","y","z","0","1","2","3","4","5","6","7","8","9","+","/",
+                            "!","@","#","$","%","&"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,8 +118,6 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         String newPassword = passwordText.getText().toString();
         String newUsername = usernameText.getText().toString();
 
-        encrypted = AES.encrypt(newPassword,password);
-
         //TODO CHECK OF HIJ ALLES WEL ACCEPTEERT
 
         if (account.length() == 0 || newUsername.length() == 0 || newPassword.length() == 0) {
@@ -137,11 +134,6 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
             newAccount.setAccount(account);
             newAccount.setUsername(AES.encrypt(newUsername,password));
             newAccount.setPassword(AES.encrypt(newPassword, password));
-
-            String test = AES.encrypt(newPassword, password);
-            String test2 = AES.decrypt(test, password);
-
-            System.out.println("[" + newPassword + "],[" + test + "],[" + test2 + "]");
 
             FirebaseHelper helper = new FirebaseHelper(this);
             helper.addAccount(newAccount);

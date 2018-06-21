@@ -164,8 +164,11 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
                     }
                 }
 
+                System.out.println("[" + givenAnswer + "],[" + answer + "]");
+
                 answer = AES.decrypt(answer, password);
 
+                //TODO SOMETHIMES HE POSTS THE PASSWORD AS ANSWER
 
                 System.out.println("[" + givenAnswer + "],[" + answer + "]");
 
@@ -185,6 +188,10 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
                 }
 
             } else {
+
+                givenAnswer = AES.encrypt(givenAnswer, password);
+
+                Log.d("Print", givenAnswer);
 
                 Question mainQuestion = new Question(question, givenAnswer);
 

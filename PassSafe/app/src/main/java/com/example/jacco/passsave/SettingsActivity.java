@@ -152,6 +152,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         alertDialog.show();
     }
 
+    // Check if right key is inputted
     public void checkKey(String inputKey) {
 
         EditText oldPasswordText = findViewById(R.id.oldPassword);
@@ -160,9 +161,10 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
 
         System.out.println("[" + password + "],[" + AES.encrypt(inputKey,password) + "],[" + key + "]");
 
+        // Check if key is right
         if (key.equals(AES.encrypt(inputKey,password))) {
 
-            //TODO WERKT NOG NIET
+            // Change password in firebaseAuth
             user.updatePassword(newPassword1)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -182,8 +184,10 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
             newPassword1Text.setText("");
             newPassword2Text.setText("");
 
+            // Store new password
             storePassword(newPassword1);
 
+            // Call firebasefunction to change encryption
             FirebaseHelper helper = new FirebaseHelper(context);
             helper.changePassword(password, newPassword1);
         }
@@ -326,6 +330,9 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
     @Override
     protected void onResume() {
         super.onResume();
+
+        readPassword();
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             // user isn't signed in

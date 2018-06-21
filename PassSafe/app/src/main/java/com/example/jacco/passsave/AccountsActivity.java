@@ -246,6 +246,9 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
     @Override
     protected void onResume() {
         super.onResume();
+
+        readPassword();
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             // user isn't signed in

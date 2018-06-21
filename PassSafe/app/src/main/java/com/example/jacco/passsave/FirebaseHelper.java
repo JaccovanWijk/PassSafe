@@ -235,13 +235,13 @@ public class FirebaseHelper extends AES{
             String username = anAccount.getUsername();
             String password = anAccount.getPassword();
 
-            System.out.println(account + "SDJFLKNSDFKSDFLSDFNLSDKF");
+            Log.d("??????", account + "," + username + "," + password);
 
-            account = AES.decrypt(account, oldPassword);
             username = AES.decrypt(username, oldPassword);
             password = AES.decrypt(password, oldPassword);
 
-            account = AES.encrypt(account, newPassword);
+            Log.d("!!!!!!!!!!!!!!!!!!", password + "," + username);
+
             username = AES.encrypt(username, newPassword);
             password = AES.encrypt(password, newPassword);
 
@@ -264,14 +264,8 @@ public class FirebaseHelper extends AES{
             String question = aQuestion.getQuestion();
             String answer = aQuestion.getAnswer();
 
-            System.out.println("/////" + question + "1????");
-
-            question = AES.decrypt(question, oldPassword);
             answer = AES.decrypt(answer, oldPassword);
 
-            System.out.println(answer + "??????????????????????????????");
-
-            question = AES.encrypt(question, newPassword);
             answer = AES.encrypt(answer, newPassword);
 
             Question updatedQuestion = new Question(question, answer);
@@ -287,9 +281,13 @@ public class FirebaseHelper extends AES{
     }
 
     public void changeKey() {
+        Log.d("KEYYYYYYY", key);
         key = AES.decrypt(key,oldPassword);
 
+        Log.d("KEYYYYYYY", key);
         key = AES.encrypt(key,newPassword);
+
+        Log.d("KEYYYYYYY", key);
 
         // Upload encrypted key
         DatabaseReference ref = database.child("Key").push();
