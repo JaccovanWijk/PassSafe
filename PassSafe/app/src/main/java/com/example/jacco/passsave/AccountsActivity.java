@@ -87,11 +87,13 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
                 Intent intent = new Intent(AccountsActivity.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 finish();
                 return true;
             case R.id.AccountSettings:
                 Intent intent2 = new Intent(AccountsActivity.this, SettingsActivity.class);
                 startActivity(intent2);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -115,6 +117,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
             intent.putExtra("account", selectedAccount);
             intent.putExtra("boolean", true);
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
         }
     }
 
@@ -135,6 +138,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
     public void addButtonClicked(View view) {
         Intent intent = new Intent(AccountsActivity.this, NewAccountActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
     }
 
     // Update listview with updated info
@@ -257,5 +261,11 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
 
             finish();
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 }

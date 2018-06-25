@@ -99,4 +99,10 @@ public class PasswordActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+    }
 }

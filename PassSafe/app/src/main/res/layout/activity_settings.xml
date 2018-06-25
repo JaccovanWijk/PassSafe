@@ -20,9 +20,10 @@
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="25dp"
                 android:layout_weight="1"
-                app:srcCompat="@android:drawable/sym_def_app_icon" />
+                app:srcCompat="@drawable/ic_account_circle" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -88,7 +89,9 @@
                 android:id="@+id/button2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="15dp"
                 android:layout_weight="1"
+                android:background="@drawable/custom_button"
                 android:onClick="changePasswordClicked"
                 android:text="Change Password" />
 
@@ -124,7 +127,8 @@
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:onClick="addQuestionButtonClicked"
-                android:text="Add Question" />
+                android:text="Add Question"
+                android:background="@drawable/custom_button"/>
 
         </LinearLayout>
     </ScrollView>

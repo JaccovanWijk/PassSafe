@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
             case R.id.register:
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -123,6 +124,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
                                     startActivity(intent);
+                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
                             } else {
                                 // If sign in fails, display a message to the user.

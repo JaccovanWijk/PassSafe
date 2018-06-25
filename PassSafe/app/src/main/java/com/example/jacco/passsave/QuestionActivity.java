@@ -93,6 +93,8 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
             Intent intent = new Intent(QuestionActivity.this, SettingsActivity.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+
         } else {
 
             int idx = new Random().nextInt(usedQuestions.size());
@@ -177,6 +179,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
                     Intent intent = new Intent(QuestionActivity.this, PasswordActivity.class);
                     intent.putExtra("account", account);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
 
                     finish();
 
@@ -200,6 +203,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
                 Intent intent = new Intent(QuestionActivity.this, LoginActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
 
                 finish();
 
@@ -240,5 +244,11 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
             finish();
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 }

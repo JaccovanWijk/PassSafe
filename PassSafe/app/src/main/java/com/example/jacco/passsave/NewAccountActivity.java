@@ -99,6 +99,7 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
                 Intent intent = new Intent(NewAccountActivity.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 finish();
                 return true;
             case R.id.AccountSettings:
@@ -140,6 +141,7 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
 
             Intent intent = new Intent(NewAccountActivity.this, AccountsActivity.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
 
             finish();
         }
@@ -207,5 +209,11 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
 
             finish();
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 }

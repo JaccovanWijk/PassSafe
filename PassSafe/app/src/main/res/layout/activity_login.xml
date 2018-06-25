@@ -54,6 +54,8 @@
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/custom_button"
             android:onClick="loginClicked"
             android:text="Log in" />
 
@@ -61,6 +63,8 @@
             android:id="@+id/forgotPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/custom_button"
             android:onClick="forgotPasswordClicked"
             android:text="Forgot Password" />
 

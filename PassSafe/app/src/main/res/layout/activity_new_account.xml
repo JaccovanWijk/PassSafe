@@ -45,6 +45,8 @@
         android:id="@+id/randompassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/custom_button"
         android:onClick="randomPasswordClicked"
         android:text="Random Password" />
 
@@ -69,6 +71,8 @@
         android:id="@+id/accept"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/custom_button"
         android:onClick="acceptButtonClicked"
         android:text="Accept" />
 

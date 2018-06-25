@@ -110,6 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Intent intent = new Intent(RegisterActivity.this, QuestionActivity.class);
                             intent.putExtra("boolean", false);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
 
                             finish();
                         } else {
@@ -154,5 +155,11 @@ public class RegisterActivity extends AppCompatActivity {
         int duration = Toast.LENGTH_LONG;
         String text = "A verification e-mail has been sent";
         Toast.makeText(context, text, duration).show();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
     }
 }
