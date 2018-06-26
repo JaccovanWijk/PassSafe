@@ -25,7 +25,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class NewAccountActivity extends AppCompatActivity implements FirebaseHelper.CallBack{
+public class NewAccountActivity extends AppCompatActivity {
 
     int[] ids = {R.id.account, R.id.username, R.id.password};
     public String password;
@@ -42,47 +42,6 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
         setContentView(R.layout.activity_new_account);
 
         readPassword();
-    }
-
-    @Override
-    public void gotQuestions(ArrayList<Question> questions) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Something went wrong...";
-        Toast.makeText(context, text, duration).show();
-
-        // log error
-        Log.e("ERROR", "You're not supposed to be here!!");
-    }
-    @Override
-    public void gotError(String message) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Something went wrong...";
-        Toast.makeText(context, text, duration).show();
-
-        // log error
-        Log.e("ERROR", message);
-    }
-    @Override
-    public void gotAccounts(ArrayList<Account> accounts) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Something went wrong...";
-        Toast.makeText(context, text, duration).show();
-
-        // log error
-        Log.e("ERROR", "you're not supposed to be here!!");
-    }
-    @Override
-    public void gotKey(String key) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Something went wrong...";
-        Toast.makeText(context, text, duration).show();
-
-        // log error
-        Log.e("ERROR", "You're not supposed to be here!");
     }
 
     // add menu
@@ -123,11 +82,9 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
 
         if (account.length() == 0 || newUsername.length() == 0 || newPassword.length() == 0) {
             Log.d("error", "Something is empty");
+            messageUser("Not everything is filled in!");
         } else if (newPassword.length() < 7) {
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_LONG;
-            String text = "Password too short!";
-            Toast.makeText(context, text, duration).show();
+            messageUser("Password is too short!");
         } else {
 
             Account newAccount = new Account(account, newUsername, newPassword);
@@ -215,5 +172,9 @@ public class NewAccountActivity extends AppCompatActivity implements FirebaseHel
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
+
+    public void messageUser(String content) {
+        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 }

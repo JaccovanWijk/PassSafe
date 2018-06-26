@@ -14,7 +14,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -124,11 +125,11 @@
                 android:id="@+id/addQuestionButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_margin="15dp"
                 android:layout_weight="1"
+                android:background="@drawable/custom_button"
                 android:onClick="addQuestionButtonClicked"
-                android:text="Add Question"
-                android:background="@drawable/custom_button"/>
+                android:text="Add Question" />
 
         </LinearLayout>
     </ScrollView>

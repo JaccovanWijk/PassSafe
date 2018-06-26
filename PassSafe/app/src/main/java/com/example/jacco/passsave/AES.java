@@ -2,6 +2,7 @@ package com.example.jacco.passsave;
 
 /**
  * Created by Jacco on 6-6-2018.
+ *
  */
 
 import android.util.*;
@@ -22,16 +23,12 @@ import javax.crypto.spec.SecretKeySpec;
 public class AES {
 
     private static SecretKeySpec secretKey ;
-    private static byte[] key ;
-
-    private static String decryptedString;
-    private static String encryptedString;
 
     public static void setKey(String myKey){
 
         MessageDigest sha = null;
         try {
-            key = myKey.getBytes("UTF-8");
+            byte[] key = myKey.getBytes("UTF-8");
             System.out.println(key.length);
             sha = MessageDigest.getInstance("SHA-1");
             key = sha.digest(key);
@@ -48,76 +45,48 @@ public class AES {
 
     }
 
-    public static String getDecryptedString() {
-        return decryptedString;
-    }
-
-    public static void setDecryptedString(String decryptedString) {
-        AES.decryptedString = decryptedString;
-    }
-
-    public static String getEncryptedString() {
-        return encryptedString;
-    }
-
-    public static void setEncryptedString(String encryptedString) {
-        AES.encryptedString = encryptedString;
-    }
-
     public static String encrypt(String strToEncrypt, String key)
     {
         setKey(key);
+
+        String encryptedString;
 
         try
         {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-            setEncryptedString(Base64.encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")), Base64.DEFAULT));
+            encryptedString = Base64.encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")), Base64.DEFAULT);
+
+            return encryptedString;
         }
         catch (Exception e)
         {
             System.out.println("Error while encrypting: "+e.toString());
+            return "";
         }
-        return getEncryptedString();
-
     }
 
     public static String decrypt(String strToDecrypt, String key)
     {
         setKey(key);
 
+        String decryptedString;
+
         try
         {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
 
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
-            setDecryptedString(new String(cipher.doFinal(Base64.decode(strToDecrypt, Base64.DEFAULT))));
+
+            decryptedString = new String(cipher.doFinal(Base64.decode(strToDecrypt, Base64.DEFAULT)));
+            return decryptedString;
         }
         catch (Exception e)
         {
             System.out.println("Error while decrypting: "+e.toString());
+            return "";
         }
-        return getDecryptedString();
-    }
-
-
-    public static void main(String args[])
-    {
-        final String strToEncrypt = "My text to encrypt";
-        final String strPssword = "encryptor key";
-        AES.setKey(strPssword);
-
-        AES.encrypt(strToEncrypt.trim(), "hoi");
-
-        System.out.println("String to Encrypt: " + strToEncrypt);
-        System.out.println("Encrypted: " + AES.getEncryptedString());
-
-        final String strToDecrypt =  AES.getEncryptedString();
-        AES.decrypt(strToDecrypt.trim(), "hoi");
-
-        System.out.println("String To Decrypt : " + strToDecrypt);
-        System.out.println("Decrypted : " + AES.getDecryptedString());
     }
 
 }

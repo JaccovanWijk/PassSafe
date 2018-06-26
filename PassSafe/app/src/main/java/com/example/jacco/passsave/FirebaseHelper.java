@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class FirebaseHelper extends AES{
     private Context context;
     private CallBack delegate;
     private DatabaseReference database;
+    private DatabaseReference userDatabase;
     public FirebaseUser user;
     public String userId;
     public ArrayList<Account> accounts;
@@ -61,6 +63,7 @@ public class FirebaseHelper extends AES{
         }
 
         database = firebase.getReference(userId);
+        userDatabase = firebase.getReference("Users");
 
     }
 
@@ -151,153 +154,15 @@ public class FirebaseHelper extends AES{
         });
     }
 
-    // Change encryption of all encrypted files in firebase
-    public void changePassword(String oldPassword, String newPassword) {
-
-        // Update passwords
-        this.oldPassword = oldPassword;
-        this.newPassword = newPassword;
-
-        accounts = new ArrayList<>();
-        questions = new ArrayList<>();
-
-        // Load in accounts
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                accounts = new ArrayList<>();
-                for (DataSnapshot child : dataSnapshot.child("Accounts").getChildren()) {
-                    accounts.add(child.getValue(Account.class));
-                }
-//
-//                delegate.gotAccounts(accounts);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-//                delegate.gotAccountsError(databaseError.getMessage());
-                Log.e("Error",databaseError.getMessage());
-            }
-        });
-
-        // Loud in questions
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                questions = new ArrayList<>();
-
-                for (DataSnapshot child : dataSnapshot.child("Questions").getChildren()) {
-                    questions.add(child.getValue(Question.class));
-                }
-//
-//                delegate.gotQuestions(questions);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-//                delegate.gotQuestionsError(databaseError.getMessage());
-                Log.e("Error",databaseError.getMessage());
-            }
-        });
-
-        // Load in key
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                key = "";
-
-                for (DataSnapshot child : dataSnapshot.child("Key").getChildren()) {
-                    key = child.getValue(String.class);
-                }
-//
-//                delegate.gotKey(key);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-//                delegate.gotError(databaseError.getMessage());
-            }
-        });
-
-        changeAccounts();
-        changeQuestions();
-        changeKey();
-
-
-    }
-
-    // Decrypt accounts with old password and encrypt with new password
-    public void changeAccounts() {
-        ArrayList<Account> updatedAccounts = new ArrayList<>();
-        for (Account anAccount : accounts) {
-            String account = anAccount.getAccount();
-            String username = anAccount.getUsername();
-            String password = anAccount.getPassword();
-
-            Log.d("??????", account + "," + username + "," + password);
-
-            username = AES.decrypt(username, oldPassword);
-            password = AES.decrypt(password, oldPassword);
-
-            Log.d("!!!!!!!!!!!!!!!!!!", password + "," + username);
-
-            username = AES.encrypt(username, newPassword);
-            password = AES.encrypt(password, newPassword);
-
-            Account updatedAccount = new Account(account, username, password);
-            updatedAccounts.add(updatedAccount);
-        }
-
-        // Upload new encrypted data
-        DatabaseReference ref = database.child("Accounts").push();
-        ref.removeValue();
-        for (Account account : updatedAccounts) {
-            ref.setValue(account);
-        }
-
-    }
-
-    public void changeQuestions() {
-        ArrayList<Question> updatedQuestions = new ArrayList<>();
-        for (Question aQuestion : questions) {
-            String question = aQuestion.getQuestion();
-            String answer = aQuestion.getAnswer();
-
-            answer = AES.decrypt(answer, oldPassword);
-
-            answer = AES.encrypt(answer, newPassword);
-
-            Question updatedQuestion = new Question(question, answer);
-            updatedQuestions.add(updatedQuestion);
-        }
-
-        // Upload encrypted data
-        DatabaseReference ref = database.child("Questions").push();
-        ref.removeValue();
-        for (Question question : updatedQuestions) {
-            ref.setValue(question);
-        }
-    }
-
-    public void changeKey() {
-        Log.d("KEYYYYYYY", key);
-        key = AES.decrypt(key,oldPassword);
-
-        Log.d("KEYYYYYYY", key);
-        key = AES.encrypt(key,newPassword);
-
-        Log.d("KEYYYYYYY", key);
-
-        // Upload encrypted key
-        DatabaseReference ref = database.child("Key").push();
-        ref.removeValue();
-        ref.setValue(key);
-    }
-
-    public void addKey(String key, String password) {
+    public void addKey(String key, String password, String username) {
         // Upload key
         DatabaseReference ref = database.child("Key").push();
         ref.setValue(AES.encrypt(key,password));
+
+        //TODO KIJK OF HIJ GEHASHT WEL EEN KOPJE KAN ZIJN
+        byte[] encodedUsername = Base64.encode(username.getBytes(), Base64.DEFAULT);
+        username = new String(encodedUsername);
+        DatabaseReference ref2 = userDatabase.child(username).push();
+        ref2.setValue(user.getUid());
     }
 }

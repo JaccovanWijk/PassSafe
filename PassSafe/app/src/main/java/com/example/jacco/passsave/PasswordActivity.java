@@ -1,5 +1,8 @@
 package com.example.jacco.passsave;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +21,8 @@ import java.io.FileInputStream;
 public class PasswordActivity extends AppCompatActivity {
 
     public Account account;
+    public String username;
+    public String accountPassword;
     public String password;
     public TextView usernameText;
     public TextView passwordText;
@@ -37,8 +42,11 @@ public class PasswordActivity extends AppCompatActivity {
 
         System.out.println(AES.decrypt(account.getPassword(), password));
 
-        usernameText.setText("Your username is: " + AES.decrypt(account.getUsername(), password));
-        passwordText.setText("Your password is: " + AES.decrypt(account.getPassword(), password));
+        username = AES.decrypt(account.getUsername(), password);
+        accountPassword = AES.decrypt(account.getPassword(), password);
+
+        usernameText.setText("Your username is: " + username);
+        passwordText.setText("Your password is: " + accountPassword);
     }
 
     // Add menu
@@ -104,5 +112,17 @@ public class PasswordActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+    }
+
+    public void copyUsernameClicked(View view) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Username", username);
+        clipboard.setPrimaryClip(clip);
+    }
+
+    public void copyPasswordClicked(View view) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Username", username);
+        clipboard.setPrimaryClip(clip);
     }
 }

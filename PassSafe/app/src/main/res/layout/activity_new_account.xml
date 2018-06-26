@@ -11,7 +11,9 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Account" />
+        android:layout_gravity="center"
+        android:text="New Account"
+        android:textSize="25sp" />
 
     <EditText
         android:id="@+id/account"
@@ -25,7 +27,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Your username" />
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Your username"
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/username"
@@ -39,7 +44,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Input your password or generate a random password by clicking the button!" />
+        android:gravity="center"
+        android:text="Input your password or generate a random password by clicking the button!"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/randompassword"

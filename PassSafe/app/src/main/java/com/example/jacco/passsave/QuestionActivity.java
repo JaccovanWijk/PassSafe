@@ -86,10 +86,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         TextView textView = findViewById(R.id.question);
 
         if (questions.size() == 0) {
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_LONG;
-            String text = "No questions added yet, please add them in the settings.";
-            Toast.makeText(context, text, duration).show();
+            messageUser("No questions added yet, please add them in the settings!");
 
             Intent intent = new Intent(QuestionActivity.this, SettingsActivity.class);
             startActivity(intent);
@@ -108,30 +105,21 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
     }
     @Override
     public void gotAccounts(ArrayList<Account> accounts) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Something went wrong...";
-        Toast.makeText(context, text, duration).show();
+        messageUser("Something went wrong...");
 
         // log error
         Log.e("ERROR", "You're not supposed to be here!!");
     }
     @Override
     public void gotKey(String key) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Something went wrong...";
-        Toast.makeText(context, text, duration).show();
+        messageUser("Something went wrong...");
 
         // log error
         Log.e("ERROR", "You're not supposed to be here!");
     }
     @Override
     public void gotError(String message) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Something went wrong...";
-        Toast.makeText(context, text, duration).show();
+        messageUser("Something went wrong...");
 
         // log error
         Log.e("ERROR", message);
@@ -146,10 +134,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         String givenAnswer = answerText.getText().toString();
 
         if (givenAnswer.length() == 0) {
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_LONG;
-            String text = "Answer can't be empty!";
-            Toast.makeText(context, text, duration).show();
+            messageUser("Answer can't be empty!");
 
         } else {
 
@@ -184,17 +169,12 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
                     finish();
 
                 } else {
-                    Context context = getApplicationContext();
-                    int duration = Toast.LENGTH_LONG;
-                    String text = "Wrong answer!";
-                    Toast.makeText(context, text, duration).show();
+                    messageUser("Wrong answer!");
                 }
 
             } else {
 
                 givenAnswer = AES.encrypt(givenAnswer, password);
-
-                Log.d("Print", givenAnswer);
 
                 Question mainQuestion = new Question(question, givenAnswer);
 
@@ -225,7 +205,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
             String[] info = temp.split("\\s+");
 
             password = info[0];
-            Log.d("PASS!!!!!!!!!!!!!!", password + "]");
+
             //string temp contains all the data of the file.
             fin.close();
         } catch(Exception e) {
@@ -250,5 +230,9 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
+
+    public void messageUser(String content) {
+        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 }

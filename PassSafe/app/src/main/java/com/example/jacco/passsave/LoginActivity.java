@@ -36,14 +36,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
-* TODO AUTHSTATE IN ONRESUME
-* TODO TRANSFER LOG INTO TOASTS
+TODO waarom werkt de firebasehelper niet voor wachtwoord veranderen? Nieuwe helper maken?
+TODO Om email met key te vergelijken ook email in firebase database zetten?
+TODO GAAT HIJ NA EEN DELEGATE NOG DOOR?
+ */
+
+/*
+* TODO AUTHSTATE IN ONRESUME!!!!!
 * TODO MAKE UP MORE QUESTIONS
 * TODO SAVE  EMAIL AFTER LOGIN IN PREFERENCES
-* TODO FIX GIT
-* TODO MAKE SURE ACCOUNTSACTIVITY CAN ONLY EXIST ONCE
-* TODO WHEN ADDING QUESTION ASK FOR PASSWORD
-* TODO REGISTER: FIRST CHECK EMAIL, THEN KEY
+* TODO https://codinginflow.com/tutorials/android/slide-animation-between-activities
 */
 
 public class LoginActivity extends AppCompatActivity {
@@ -54,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
     private String username;
     private String password;
     private String key;
+    private String givenKey;
+    private String givenUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +104,7 @@ public class LoginActivity extends AppCompatActivity {
         // Check if nothing is left empty
         if (username.length() == 0 || password.length() == 0) {
             Log.d("error", "something is empty");
+            messageUser("Not everything is filled in!");
         } else {
             // Check if input is correct
             mAuth.signInWithEmailAndPassword(username, password)
@@ -114,10 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // Check if user verified his mail
                                 //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 if (user.isEmailVerified()) {
-                                    Context context = getApplicationContext();
-                                    int duration = Toast.LENGTH_LONG;
-                                    String text = "E-Mail not verified!";
-                                    Toast.makeText(context, text, duration).show();
+                                    messageUser("E-Mail not verified!");
                                 } else {
                                     // Store password in background
                                     storePassword();
@@ -129,8 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w("Sign out", "signInWithEmail:failure", task.getException());
-                                Toast.makeText(LoginActivity.this, "Wrong username/password.",
-                                        Toast.LENGTH_SHORT).show();
+                                messageUser("Wrong username/password!");
                             }
                         }
                     });
@@ -155,33 +156,32 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void forgotPasswordClicked(View view) {
-        // Upload key
-        FirebaseDatabase firebase = FirebaseDatabase.getInstance();
 
-        String userId = "";
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            userId = user.getUid();
-        } else {
-            //TODO ERROR
-        }
+        //TODO CHECK IF USENAME AND KEY COMBINE IN STEAD OF ASKING FOR KEY FROM A USER
+        //TODO https://stackoverflow.com/questions/41666044/how-to-get-userid-by-user-email-firebase-android
 
-        DatabaseReference database = firebase.getReference(userId);
-
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot userKey: dataSnapshot.child("Key").getChildren()) {
-                    key = userKey.getValue(String.class);
-                }
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        FirebaseDatabase firebase = FirebaseDatabase.getInstance();
+//
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        if (user != null) {
+//            String userId = user.getUid();
+//
+//            DatabaseReference database = firebase.getReference(userId);
+//
+//            database.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                    for (DataSnapshot userKey: dataSnapshot.child("Key").getChildren()) {
+//                        key = userKey.getValue(String.class);
+//                    }
+//
+//                }
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            });
 
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.prompts, null);
@@ -202,8 +202,8 @@ public class LoginActivity extends AppCompatActivity {
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                key = userInput.getText().toString();
-                                username = emailInput.getText().toString();
+                                givenKey = userInput.getText().toString();
+                                givenUsername = emailInput.getText().toString();
 
                                 checkKey();
                             }
@@ -221,13 +221,28 @@ public class LoginActivity extends AppCompatActivity {
         // show it
         alertDialog.show();
 
-
     }
 
     public void checkKey() {
-        //TODO CHECK IF USERNAME AND KEY ADD UP
 
-        System.out.println(key);
+        //TODO LOAD IN UID FROM E-MAIL, LOAD IN KEY AND COMPARE
+
+
+        if(givenKey.equals(key)) {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            String emailAddress = "user@example.com";
+
+            auth.sendPasswordResetEmail(emailAddress)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("message", "Email sent.");
+                                messageUser("Reset e-mail has been sent!");
+                            }
+                        }
+                    });
+        }
     }
 
     @Override
@@ -240,5 +255,9 @@ public class LoginActivity extends AppCompatActivity {
 
         usernameText.setText("");
         passwordText.setText("");
+    }
+
+    public void messageUser(String content) {
+        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 }

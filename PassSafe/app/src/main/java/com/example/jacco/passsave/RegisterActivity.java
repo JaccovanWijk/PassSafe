@@ -63,27 +63,19 @@ public class RegisterActivity extends AppCompatActivity {
         // Check if input is correct
         if (username.length() == 0) {
             Log.d("error","Username is empty");
+            messageUser("No e-mail is given!");
         }
         else if (password1.length() < 7) {
             Log.d("error", "Password too short");
+            messageUser("Password is too short!");
         }
         else if (!password1.equals(password2)) {
             Log.d("error", "password1 != password2");
+            messageUser("Passwords do not match!");
         }
         else {
 
-            key = createKey();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Your activation key is: " + key + "\nThis key is needed for changing" +
-                               " your password. \nNote this key and make sure not to lose it!")
-                    .setPositiveButton("Next", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // create User
-                            createUser();
-                        }
-                    });
-            builder.show();
+            createUser();
         }
     }
 
@@ -98,26 +90,42 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d("Created", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            sendEmail();
+                            key = createKey();
 
-                            byte[] bytesOldPassword = Base64.encode(password1.getBytes(), Base64.DEFAULT);
-                            String encodedPassword = new String(bytesOldPassword);
-                            encodedPassword = encodedPassword.replace("\n", "").replace("\r", "");
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setMessage("Your activation key is: " + key + "\nThis key " +
+                                    "is needed for changing" +
+                                    " your password. \nNote this key and make sure not to lose it!")
+                                    .setPositiveButton("Next", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
 
-                            FirebaseHelper helper = new FirebaseHelper(context);
-                            helper.addKey(key, encodedPassword);
+                                            sendEmail();
 
-                            Intent intent = new Intent(RegisterActivity.this, QuestionActivity.class);
-                            intent.putExtra("boolean", false);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                                            byte[] bytesOldPassword = Base64.encode(password1.getBytes(),
+                                                    Base64.DEFAULT);
+                                            String encodedPassword = new String(bytesOldPassword);
+                                            encodedPassword = encodedPassword.replace("\n",
+                                                    "").replace("\r", "");
 
-                            finish();
+                                            FirebaseHelper helper = new FirebaseHelper(context);
+                                            helper.addKey(key, encodedPassword, username);
+
+                                            Intent intent = new Intent(RegisterActivity
+                                                    .this, QuestionActivity.class);
+                                            intent.putExtra("boolean", false);
+                                            startActivity(intent);
+                                            overridePendingTransition(R.anim.slide_in_left,
+                                                    R.anim.slide_out_right);
+
+                                            finish();
+                                        }
+                                    });
+                            builder.show();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("Not created", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Log.w("Not created", "createUserWithEmail:failure",
+                                    task.getException());
+                            messageUser("E-Mail in use!");
                         }
                     }
                 });
@@ -151,15 +159,16 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
 
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "A verification e-mail has been sent";
-        Toast.makeText(context, text, duration).show();
+        messageUser("A verification e-mail has been sent!");
     }
 
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+    }
+
+    public void messageUser(String content) {
+        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 }

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context="com.example.jacco.passsave.RegisterActivity">
 
     <TextView
@@ -27,7 +28,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Password must be at least 7 characters" />
+        android:gravity="center"
+        android:text="Password must be at least 7 characters"
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/password1"

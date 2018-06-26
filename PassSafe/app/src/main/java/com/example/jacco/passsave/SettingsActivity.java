@@ -29,7 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-public class SettingsActivity extends AppCompatActivity implements FirebaseHelper.CallBack{
+public class SettingsActivity extends AppCompatActivity implements changePasswordHelper.CallBack{
 
     public String[] allQuestions = {"What is your fathers first name?", "What is your mothers first name?",
                                     "What was your first pets name?", "Which city/town were you born in?"};
@@ -42,6 +42,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
     public String key;
     public FirebaseUser user;
     public Context context = this;
+    public String givenPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         TextView usernameText = findViewById(R.id.username);
         usernameText.setText(username);
 
-        FirebaseHelper helper = new FirebaseHelper(this);
+        changePasswordHelper helper = new changePasswordHelper(this);
         helper.getQuestions(this);
     }
 
@@ -92,28 +93,14 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         spinner.setSelection(0);
     }
     @Override
-    public void gotAccounts(ArrayList<Account> accounts) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Something went wrong...";
-        Toast.makeText(context, text, duration).show();
-
-        // log error
-        Log.e("ERROR", "You're not supposed to be here!");
-    }
-    @Override
     public void gotError(String message) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        String text = "Something went wrong...";
-        Toast.makeText(context, text, duration).show();
+        messageUser("Something went wrong!");
 
         // log error
         Log.e("ERROR", message);
     }
     @Override
     public void gotKey(String aKey) {
-        //TODO DO SOMETHING WITH KEY
         key = aKey;
 
         LayoutInflater li = LayoutInflater.from(this);
@@ -151,6 +138,10 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         // show it
         alertDialog.show();
     }
+    @Override
+    public void changedPassword(String message) {
+        messageUser(message);
+    }
 
     // Check if right key is inputted
     public void checkKey(String inputKey) {
@@ -159,10 +150,12 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         EditText newPassword1Text = findViewById(R.id.newPassword1);
         EditText newPassword2Text = findViewById(R.id.newPassword2);
 
-        System.out.println("[" + password + "],[" + AES.encrypt(inputKey,password) + "],[" + key + "]");
+//        if (true) {
+//            messageUser("Changing passwords will make you lose your data!");
+//        } else {
 
         // Check if key is right
-        if (key.equals(AES.encrypt(inputKey,password))) {
+        if (key.equals(AES.encrypt(inputKey, password))) {
 
             // Change password in firebaseAuth
             user.updatePassword(newPassword1)
@@ -175,10 +168,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
                         }
                     });
 
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_LONG;
-            String text = "Changed password!";
-            Toast.makeText(context, text, duration).show();
+            messageUser("Password changed!");
 
             oldPasswordText.setText("");
             newPassword1Text.setText("");
@@ -188,20 +178,17 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
             storePassword(newPassword1);
 
             // Call firebasefunction to change encryption
-            FirebaseHelper helper = new FirebaseHelper(context);
-            helper.changePassword(password, newPassword1);
-        }
-        else {
+            changePasswordHelper helper = new changePasswordHelper(context);
+            helper.changePassword(this ,password, newPassword1);
+        } else {
 
             oldPasswordText.setText("");
             newPassword1Text.setText("");
             newPassword2Text.setText("");
 
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_LONG;
-            String text = "Wrong Key!";
-            Toast.makeText(context, text, duration).show();
+            messageUser("Wrong key!");
         }
+//        }
     }
 
     @Override
@@ -242,17 +229,20 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
 
         if(oldPassword.length() == 0 || newPassword1.length() == 0 || newPassword2.length() == 0) {
             Log.d("Error", "something is empty!");
+            messageUser("Not everything is filled in!");
         } else if(!password.equals(encodedOldPassword)) {
-            System.out.println("[" + encodedOldPassword + "],[" + password + "]");
             Log.d("Error", "Wrong password!");
+            messageUser("Wrong password!");
         } else if(!newPassword1.equals(newPassword2)) {
             Log.d("Error", "New passwords do not match!");
+            messageUser("Passwords do not match!");
         } else if (newPassword1.length() < 7) {
             Log.d("Error", "New password is too small!");
+            messageUser("New password is too small!");
         } else {
 
-            FirebaseHelper helper = new FirebaseHelper(this);
-            helper.getKey(this);
+            changePasswordHelper helper = new changePasswordHelper(this);
+            helper.changePassword(this, oldPassword, newPassword1);
         }
     }
 
@@ -267,25 +257,65 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
             EditText answerText = findViewById(R.id.answer);
             String answer = AES.encrypt(answerText.getText().toString(), password);
 
-            Question newQuestion = new Question(question, answer);
+            final Question newQuestion = new Question(question, answer);
 
+            LayoutInflater li = LayoutInflater.from(this);
+            View promptsView = li.inflate(R.layout.prompts_password, null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+            // set prompts.xml to alertdialog builder
+            alertDialogBuilder.setView(promptsView);
+
+            final EditText userInput = (EditText) promptsView
+                    .findViewById(R.id.password);
+
+            // set dialog message
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    givenPassword = userInput.getText().toString();
+                                    checkPassword(newQuestion);
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // show it
+            alertDialog.show();
+        } else {
+            messageUser("No questions left to answer!");
+        }
+    }
+
+    public void checkPassword(Question newQuestion) {
+
+        byte[] bytesEncoded = Base64.encode(givenPassword.getBytes(), Base64.DEFAULT);
+        String encryptedPassword = new String(bytesEncoded);
+        encryptedPassword = encryptedPassword.replace("\n", "");
+
+        if (password.equals(encryptedPassword)) {
             questions.add(newQuestion);
 
             FirebaseHelper helper = new FirebaseHelper(this);
             helper.addQuestion(newQuestion);
 
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_LONG;
-            String text = "Question added!";
-            Toast.makeText(context, text, duration).show();
+            messageUser("Question added!");
 
             gotQuestions(questions);
         } else {
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_LONG;
-            String text = "sfsdfs";
-            Toast.makeText(context, text, duration).show();
+            messageUser("Wrong password!");
         }
+
     }
 
     public void readPassword() {
@@ -347,5 +377,9 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+    }
+
+    public void messageUser(String content) {
+        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 }
