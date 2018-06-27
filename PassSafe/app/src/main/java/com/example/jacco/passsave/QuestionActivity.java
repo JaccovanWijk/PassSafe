@@ -86,7 +86,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         TextView textView = findViewById(R.id.question);
 
         if (questions.size() == 0) {
-            messageUser("No questions added yet, please add them in the settings!");
+            messageUser("Please set a new question!");
 
             Intent intent = new Intent(QuestionActivity.this, SettingsActivity.class);
             startActivity(intent);
@@ -138,26 +138,21 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
         } else {
 
-//            givenAnswer = AES.encrypt(givenAnswer, password);
-//            givenAnswer = givenAnswer.replace("\n", "");
-
             if (filledIn) {
 
                 for (Question aQuestion : foundQuestions) {
                     if (aQuestion.getQuestion().equals(question)) {
                         answer = aQuestion.getAnswer();
-
-//                        answer = answer.replace("\n", "");
                     }
                 }
 
-                System.out.println("[" + givenAnswer + "],[" + answer + "]");
+                Log.d("answers","[" + givenAnswer + "],[" + answer + "]");
 
-                answer = AES.decrypt(answer, password);
+//                answer = AES.decrypt(answer, password);
+                givenAnswer = AES.encrypt(givenAnswer, password);
 
                 //TODO SOMETHIMES HE POSTS THE PASSWORD AS ANSWER
-
-                System.out.println("[" + givenAnswer + "],[" + answer + "]");
+                Log.d("answers","[" + givenAnswer + "],[" + answer + "]");
 
                 if (givenAnswer.equals(answer)) {
 
@@ -174,7 +169,13 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
             } else {
 
+
+                Log.d("answer", "[" + givenAnswer + "]");
+
+                givenAnswer = givenAnswer.replace("\n", "");
                 givenAnswer = AES.encrypt(givenAnswer, password);
+
+                Log.d("answer", "[" + givenAnswer + "]");
 
                 Question mainQuestion = new Question(question, givenAnswer);
 

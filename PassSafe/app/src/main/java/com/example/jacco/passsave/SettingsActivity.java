@@ -28,8 +28,9 @@ import com.google.firebase.auth.FirebaseUser;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Random;
 
-public class SettingsActivity extends AppCompatActivity implements changePasswordHelper.CallBack{
+public class SettingsActivity extends AppCompatActivity implements FirebaseHelper.CallBack{
 
     public String[] allQuestions = {"What is your fathers first name?", "What is your mothers first name?",
                                     "What was your first pets name?", "Which city/town were you born in?"};
@@ -43,6 +44,13 @@ public class SettingsActivity extends AppCompatActivity implements changePasswor
     public FirebaseUser user;
     public Context context = this;
     public String givenPassword;
+    public FirebaseAuth mAuth;
+    String[] letters = {
+            "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P",
+            "Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f",
+            "g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v",
+            "w","x","y","z","0","1","2","3","4","5","6","7","8","9","+","/",
+            "!","@","#","$","%","&"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +65,12 @@ public class SettingsActivity extends AppCompatActivity implements changePasswor
         questions = new ArrayList<>();
 
         readPassword();
+        mAuth = FirebaseAuth.getInstance();
 
         TextView usernameText = findViewById(R.id.username);
         usernameText.setText(username);
 
-        changePasswordHelper helper = new changePasswordHelper(this);
+        FirebaseHelper helper = new FirebaseHelper(this);
         helper.getQuestions(this);
     }
 
@@ -93,6 +102,13 @@ public class SettingsActivity extends AppCompatActivity implements changePasswor
         spinner.setSelection(0);
     }
     @Override
+    public void gotAccounts(ArrayList<Account> accounts) {
+        messageUser("Something went wrong!");
+
+        // log error
+        Log.e("ERROR", "You're not supposed to be here!");
+    }
+    @Override
     public void gotError(String message) {
         messageUser("Something went wrong!");
 
@@ -101,95 +117,91 @@ public class SettingsActivity extends AppCompatActivity implements changePasswor
     }
     @Override
     public void gotKey(String aKey) {
-        key = aKey;
+//        key = aKey;
+//
+//        // Create popup menu
+//        LayoutInflater li = LayoutInflater.from(this);
+//        View promptsView = li.inflate(R.layout.prompts2, null);
+//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+//        // set prompts.xml to alertdialog builder
+//        alertDialogBuilder.setView(promptsView);
+//        final EditText userInput = (EditText) promptsView.findViewById(R.id.key);
+//        // set dialog message
+//        alertDialogBuilder
+//                .setCancelable(false)
+//                .setPositiveButton("OK",
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog,int id) {
+//                                String inputKey = userInput.getText().toString();
+//
+//                                // Check if input is correct
+//                                checkKey(inputKey);
+//                            }
+//                        })
+//                .setNegativeButton("Cancel",
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog,int id) {
+//                                dialog.cancel();
+//                            }
+//                        });
+//        // create alert dialog
+//        AlertDialog alertDialog = alertDialogBuilder.create();
+//        // show it
+//        alertDialog.show();
 
-        LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(R.layout.prompts2, null);
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        // set prompts.xml to alertdialog builder
-        alertDialogBuilder.setView(promptsView);
-
-        final EditText userInput = (EditText) promptsView
-                .findViewById(R.id.key);
-
-        // set dialog message
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                String inputKey = userInput.getText().toString();
-
-                                checkKey(inputKey);
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
     }
-    @Override
-    public void changedPassword(String message) {
-        messageUser(message);
-    }
+//    @Override
+//    public void changedPassword(String message) {
+//        messageUser(message);
+//
+//        // Store new password
+//        storePassword(newPassword1);
+//
+//        // Change password in firebaseAuth
+//        user.updatePassword(newPassword1)
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        if (task.isSuccessful()) {
+//                            Log.d("Change", "User password updated.");
+//                        }
+//                    }
+//                });
+//
+//        messageUser("Password changed!");
+//
+//        EditText oldPasswordText = findViewById(R.id.oldPassword);
+//        EditText newPassword1Text = findViewById(R.id.newPassword1);
+//        EditText newPassword2Text = findViewById(R.id.newPassword2);
+//
+//        oldPasswordText.setText("");
+//        newPassword1Text.setText("");
+//        newPassword2Text.setText("");
+//    }
 
     // Check if right key is inputted
-    public void checkKey(String inputKey) {
-
-        EditText oldPasswordText = findViewById(R.id.oldPassword);
-        EditText newPassword1Text = findViewById(R.id.newPassword1);
-        EditText newPassword2Text = findViewById(R.id.newPassword2);
-
-//        if (true) {
-//            messageUser("Changing passwords will make you lose your data!");
+//    public void checkKey(String inputKey) {
+//
+//        if (key.equals(AES.encrypt(inputKey, password))) {
+//
+//            // Call firebasefunction to change encryption
+//            FirebaseHelper helper = new FirebaseHelper(this);
+//            helper.changePassword(this ,password, newPassword1);
 //        } else {
-
-        // Check if key is right
-        if (key.equals(AES.encrypt(inputKey, password))) {
-
-            // Change password in firebaseAuth
-            user.updatePassword(newPassword1)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("Change", "User password updated.");
-                            }
-                        }
-                    });
-
-            messageUser("Password changed!");
-
-            oldPasswordText.setText("");
-            newPassword1Text.setText("");
-            newPassword2Text.setText("");
-
-            // Store new password
-            storePassword(newPassword1);
-
-            // Call firebasefunction to change encryption
-            changePasswordHelper helper = new changePasswordHelper(context);
-            helper.changePassword(this ,password, newPassword1);
-        } else {
-
-            oldPasswordText.setText("");
-            newPassword1Text.setText("");
-            newPassword2Text.setText("");
-
-            messageUser("Wrong key!");
-        }
+//
+//            // Reset EditTexts
+//            EditText oldPasswordText = findViewById(R.id.oldPassword);
+//            EditText newPassword1Text = findViewById(R.id.newPassword1);
+//            EditText newPassword2Text = findViewById(R.id.newPassword2);
+//            oldPasswordText.setText("");
+//            newPassword1Text.setText("");
+//            newPassword2Text.setText("");
+//
+//            messageUser("Wrong key!");
 //        }
-    }
+////        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -204,6 +216,10 @@ public class SettingsActivity extends AppCompatActivity implements changePasswor
                 Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+
+                mAuth.signOut();
+
+                finish();
                 return true;
             case R.id.AccountSettings:
                 Intent intent2 = new Intent(SettingsActivity.this, SettingsActivity.class);
@@ -215,18 +231,20 @@ public class SettingsActivity extends AppCompatActivity implements changePasswor
 
     public void changePasswordClicked(View view) {
 
+        // Load in input
         EditText oldPasswordText = findViewById(R.id.oldPassword);
         EditText newPassword1Text = findViewById(R.id.newPassword1);
         EditText newPassword2Text = findViewById(R.id.newPassword2);
-
         oldPassword = oldPasswordText.getText().toString();
         newPassword1 = newPassword1Text.getText().toString();
         newPassword2 = newPassword2Text.getText().toString();
 
+        // Encrypt password to compare
         byte[] bytesOldPassword = Base64.encode(oldPassword.getBytes(), Base64.DEFAULT);
         String encodedOldPassword = new String(bytesOldPassword);
         encodedOldPassword = encodedOldPassword.replace("\n", "").replace("\r", "");
 
+        // Check if input is correct
         if(oldPassword.length() == 0 || newPassword1.length() == 0 || newPassword2.length() == 0) {
             Log.d("Error", "something is empty!");
             messageUser("Not everything is filled in!");
@@ -241,9 +259,87 @@ public class SettingsActivity extends AppCompatActivity implements changePasswor
             messageUser("New password is too small!");
         } else {
 
-            changePasswordHelper helper = new changePasswordHelper(this);
-            helper.changePassword(this, oldPassword, newPassword1);
+            // Create popup menu to ask for key
+            LayoutInflater li = LayoutInflater.from(this);
+            View promptsView = li.inflate(R.layout.prompts2, null);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            // set prompts.xml to alertdialog builder
+            alertDialogBuilder.setView(promptsView);
+            final EditText userInput = (EditText) promptsView.findViewById(R.id.key);
+            // set dialog message
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    String inputKey = userInput.getText().toString();
+
+                                    // Popup with final check
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    builder.setMessage("Changing your password will delete all your data! Are you sure?")
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    // Delete item
+                                                    changePassword();
+                                                }
+                                            })
+                                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    // Don't delete
+                                                }
+                                            });
+                                    builder.show();
+
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    dialog.cancel();
+                                }
+                            });
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            // show it
+            alertDialog.show();
+
         }
+    }
+
+    public void changePassword() {
+
+        FirebaseHelper helper = new FirebaseHelper(this);
+        helper.changePassword(newPassword1);
+
+        String key = createKey();
+        helper.addKey(key, newPassword1);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Your new key is: " + key)
+                .setPositiveButton("Next", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        messageUser("Please set a new question!");
+
+                        Intent intent = new Intent(SettingsActivity.this, QuestionActivity.class);
+                        intent.putExtra("boolean", false);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+
+                        finish();
+                    }
+                });
+        builder.show();
+
+    }
+
+    public String createKey() {
+        String key = "";
+        for (int i = 0, n = 24; i < n; i++) {
+            int idx = new Random().nextInt(letters.length);
+            String random = letters[idx];
+            key += random;
+        }
+        return key;
     }
 
     public void addQuestionButtonClicked(View view) {

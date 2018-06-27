@@ -1,9 +1,12 @@
 package com.example.jacco.passsave;
-
+/*
+This activity makes a new user.
+ */
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,6 +53,10 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
     }
 
+    /*
+    Listen if the button is clicked, then load the input and check if it's correct. If it is correct
+    call createUser().
+     */
     public void registerClicked(View view) {
         EditText usernameText = findViewById(ids[0]);
         EditText password1Text = findViewById(ids[1]);
@@ -79,7 +86,9 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    // Upload a new user to Firebase Authentication
+    /*
+    Upload the new user to firebase. Also add the key to database, and go back to the login screen.
+     */
     public void createUser() {
         mAuth.createUserWithEmailAndPassword(username, password1)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -108,7 +117,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                     "").replace("\r", "");
 
                                             FirebaseHelper helper = new FirebaseHelper(context);
-                                            helper.addKey(key, encodedPassword, username);
+                                            helper.addKey(key, encodedPassword);
 
                                             Intent intent = new Intent(RegisterActivity
                                                     .this, QuestionActivity.class);
@@ -121,6 +130,13 @@ public class RegisterActivity extends AppCompatActivity {
                                         }
                                     });
                             builder.show();
+
+                            SharedPreferences settings = getSharedPreferences("usernames", MODE_PRIVATE);
+
+                            // Writing data to SharedPreferences
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putString("username", username);
+                            editor.commit();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Not created", "createUserWithEmail:failure",
@@ -131,7 +147,9 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    // Create random key of size 24
+    /*
+    Create a random string of size 24.
+     */
     public String createKey() {
         String key = "";
         for (int i = 0, n = 24; i < n; i++) {
@@ -139,12 +157,12 @@ public class RegisterActivity extends AppCompatActivity {
             String random = letters[idx];
             key += random;
         }
-        key = "hoi";
-        //TODO MAKE KEY RANDOM AGAIN
         return key;
     }
 
-    // Send verification Email
+    /*
+    Send verification mail.
+     */
     public void sendEmail() {
 
         FirebaseUser user = mAuth.getCurrentUser();
@@ -168,6 +186,9 @@ public class RegisterActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
     }
 
+    /*
+    Make a Toast of the inputted message.
+     */
     public void messageUser(String content) {
         Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }

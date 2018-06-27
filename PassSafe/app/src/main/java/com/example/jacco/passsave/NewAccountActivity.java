@@ -24,7 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Random;
-
+//TODO ZET BUTTON GOED IN LANDSCAPE MODE
 public class NewAccountActivity extends AppCompatActivity {
 
     int[] ids = {R.id.account, R.id.username, R.id.password};
@@ -35,6 +35,7 @@ public class NewAccountActivity extends AppCompatActivity {
                             "g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v",
                             "w","x","y","z","0","1","2","3","4","5","6","7","8","9","+","/",
                             "!","@","#","$","%","&"};
+    public FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class NewAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_account);
 
         readPassword();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     // add menu
@@ -59,6 +61,9 @@ public class NewAccountActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+
+                mAuth.signOut();
+
                 finish();
                 return true;
             case R.id.AccountSettings:

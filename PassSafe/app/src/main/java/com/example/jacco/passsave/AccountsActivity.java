@@ -43,6 +43,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
     public ListView listView;
     public Account selectedAccount;
     public String deleteAccount;
+    public FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         setContentView(R.layout.activity_accounts);
 
         readPassword();
+        mAuth = FirebaseAuth.getInstance();
 
         // Get user id
         String userId = "";
@@ -89,6 +91,9 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+
+                mAuth.signOut();
+
                 finish();
                 return true;
             case R.id.AccountSettings:
@@ -245,6 +250,9 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
     @Override
     protected void onResume() {
         super.onResume();
+
+        updateData();
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             readPassword();

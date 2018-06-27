@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -26,6 +29,7 @@ public class PasswordActivity extends AppCompatActivity {
     public String password;
     public TextView usernameText;
     public TextView passwordText;
+    public FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,7 @@ public class PasswordActivity extends AppCompatActivity {
         account = (Account) intent.getSerializableExtra("account");
 
         readPassword();
+        mAuth = FirebaseAuth.getInstance();
 
         usernameText = findViewById(R.id.username);
         passwordText = findViewById(R.id.password);
@@ -63,6 +68,9 @@ public class PasswordActivity extends AppCompatActivity {
                 Intent intent = new Intent(PasswordActivity.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+
+                mAuth.signOut();
+
                 finish();
                 return true;
             case R.id.AccountSettings:
@@ -98,6 +106,7 @@ public class PasswordActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             // user isn't signed in
@@ -122,7 +131,7 @@ public class PasswordActivity extends AppCompatActivity {
 
     public void copyPasswordClicked(View view) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Username", username);
+        ClipData clip = ClipData.newPlainText("Password", accountPassword);
         clipboard.setPrimaryClip(clip);
     }
 }

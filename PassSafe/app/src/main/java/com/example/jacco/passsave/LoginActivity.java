@@ -1,22 +1,21 @@
 package com.example.jacco.passsave;
-
-import android.app.AlertDialog;
+/*
+This activity is the log in screen. you can navigate to the registerscreen, ask for a new password,
+or just log in. It saves the hashed password so it can be used to encrypt and decrypt data.
+ */
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,27 +23,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /*
-TODO waarom werkt de firebasehelper niet voor wachtwoord veranderen? Nieuwe helper maken?
-TODO Om email met key te vergelijken ook email in firebase database zetten?
-TODO GAAT HIJ NA EEN DELEGATE NOG DOOR?
- */
-
-/*
-* TODO AUTHSTATE IN ONRESUME!!!!!
 * TODO MAKE UP MORE QUESTIONS
-* TODO SAVE  EMAIL AFTER LOGIN IN PREFERENCES
 * TODO https://codinginflow.com/tutorials/android/slide-animation-between-activities
 */
 
@@ -55,19 +38,24 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String username;
     private String password;
-    private String key;
-    private String givenKey;
-    private String givenUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Set FirebaseAuth reference
         mAuth = FirebaseAuth.getInstance();
+
+        // Reading from SharedPreferences
+        SharedPreferences settings = getSharedPreferences("usernames", MODE_PRIVATE);
+        String value = settings.getString("username", "");
+        EditText username = findViewById(R.id.username);
+        username.setText(value);
+
     }
 
-    // add menu
+    // Create Register button at top
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -86,14 +74,10 @@ public class LoginActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-    }
-
-    // Listen to loginbutton and check if input is correct
+    /*
+    Listen to loginbutton and check if input is correct. It checks with the firebase if the login
+    is legal and goes to the accountsactivity if it is. Otherwise it gives an error.
+    */
     public void loginClicked(View view) {
         EditText usernameText = findViewById(ids[0]);
         EditText passwordText = findViewById(ids[1]);
@@ -117,12 +101,18 @@ public class LoginActivity extends AppCompatActivity {
                                 FirebaseUser user = mAuth.getCurrentUser();
 
                                 // Check if user verified his mail
-                                //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                if (user.isEmailVerified()) {
+                                if (!user.isEmailVerified()) {
                                     messageUser("E-Mail not verified!");
                                 } else {
                                     // Store password in background
                                     storePassword();
+
+                                    SharedPreferences settings = getSharedPreferences("usernames", MODE_PRIVATE);
+
+                                    // Writing data to SharedPreferences
+                                    SharedPreferences.Editor editor = settings.edit();
+                                    editor.putString("username", username);
+                                    editor.commit();
 
                                     Intent intent = new Intent(LoginActivity.this, AccountsActivity.class);
                                     startActivity(intent);
@@ -138,7 +128,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // Store encrypted password in a file
+    /*
+    Store encrypted password in a file.
+     */
     public void storePassword() {
         String filename = "StorePass";
 
@@ -155,105 +147,22 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void forgotPasswordClicked(View view) {
-
-        //TODO CHECK IF USENAME AND KEY COMBINE IN STEAD OF ASKING FOR KEY FROM A USER
-        //TODO https://stackoverflow.com/questions/41666044/how-to-get-userid-by-user-email-firebase-android
-
-//        FirebaseDatabase firebase = FirebaseDatabase.getInstance();
-//
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        if (user != null) {
-//            String userId = user.getUid();
-//
-//            DatabaseReference database = firebase.getReference(userId);
-//
-//            database.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                    for (DataSnapshot userKey: dataSnapshot.child("Key").getChildren()) {
-//                        key = userKey.getValue(String.class);
-//                    }
-//
-//                }
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
-
-        LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(R.layout.prompts, null);
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        // set prompts.xml to alertdialog builder
-        alertDialogBuilder.setView(promptsView);
-
-        final EditText userInput = (EditText) promptsView
-                .findViewById(R.id.key);
-        final EditText emailInput = (EditText) promptsView
-                .findViewById(R.id.email);
-
-        // set dialog message
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                givenKey = userInput.getText().toString();
-                                givenUsername = emailInput.getText().toString();
-
-                                checkKey();
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        // show it
-        alertDialog.show();
-
-    }
-
-    public void checkKey() {
-
-        //TODO LOAD IN UID FROM E-MAIL, LOAD IN KEY AND COMPARE
-
-
-        if(givenKey.equals(key)) {
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            String emailAddress = "user@example.com";
-
-            auth.sendPasswordResetEmail(emailAddress)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Log.d("message", "Email sent.");
-                                messageUser("Reset e-mail has been sent!");
-                            }
-                        }
-                    });
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
 
+        SharedPreferences settings = getSharedPreferences("usernames", MODE_PRIVATE);
+
+        // Reading from SharedPreferences
+        String value = settings.getString("username", "");
+        Log.d("username", value);
+
+        EditText username = findViewById(R.id.username);
+        username.setText(value);
+
         // Empty history of EditText
-        EditText usernameText = findViewById(ids[0]);
         EditText passwordText = findViewById(ids[1]);
 
-        usernameText.setText("");
         passwordText.setText("");
     }
 

@@ -63,7 +63,6 @@ public class FirebaseHelper extends AES{
         }
 
         database = firebase.getReference(userId);
-        userDatabase = firebase.getReference("Users");
 
     }
 
@@ -154,15 +153,25 @@ public class FirebaseHelper extends AES{
         });
     }
 
-    public void addKey(String key, String password, String username) {
+    public void addKey(String key, String password) {
         // Upload key
         DatabaseReference ref = database.child("Key").push();
         ref.setValue(AES.encrypt(key,password));
+    }
 
-        //TODO KIJK OF HIJ GEHASHT WEL EEN KOPJE KAN ZIJN
-        byte[] encodedUsername = Base64.encode(username.getBytes(), Base64.DEFAULT);
-        username = new String(encodedUsername);
-        DatabaseReference ref2 = userDatabase.child(username).push();
-        ref2.setValue(user.getUid());
+    public void changePassword(String newPassword) {
+        database.removeValue();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        user.updatePassword(newPassword)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("Edit", "User password updated.");
+                        }
+                    }
+                });
     }
 }

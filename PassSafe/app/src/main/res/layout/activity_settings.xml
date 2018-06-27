@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Old Password"
-                android:inputType="text"
+                android:inputType="text|textPassword"
                 android:padding="15dp"
                 android:textSize="20sp" />
 
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="New Password"
-                android:inputType="text"
+                android:inputType="text|textPassword"
                 android:padding="15dp"
                 android:textSize="20sp" />
 
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Repeat New Password"
-                android:inputType="text"
+                android:inputType="text|textPassword"
                 android:padding="15dp"
                 android:textSize="20sp" />
 
