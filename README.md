@@ -40,9 +40,22 @@ Reading from firebase goes as follows:
 * Decrypting the password with [AES encryption](https://aesencryption.net/).
 
 # PassSafe
-Jacco van Wijk
-Programmeerproject
-Minor Programmeren 2018
+Jacco van Wijk  
+Programmeerproject  
+Minor Programmeren 2018  
 
-# The App
+
+## The App
 PassSafe is an app that can store your passwords in an online database, so you can acces them from any device. This way you don't have to remember all of your passwords and you can make them harder to crack. All personal information is saved encrypted using a personal encryptionkey. You'll also recieve an activationkey, which is another step to make your account extra secure. It's possible to add accounts, overlook all of your accounts, see account details, and edit your profile. You can also generate a random password for your account. 
+
+## Sources
+In this app accounts and storing data is managed with [Firebase](firebase.google.com). The authentication feature is used for logging in and the realtime database is used for storing the passwords, questions and the activationkeys. 
+
+### Logo
+The logo is made by [GraphicLoads](http://www.iconarchive.com/artist/graphicloads.html) and can be found at http://www.iconarchive.com/show/polygon-icons-by-graphicloads/lock-icon.html.
+
+### Encryption
+For the encryption the app uses a altered version of this [AES encryption](https://aesencryption.net/). Furthermore it uses Base64 to encode and decode.  
+
+### Animation
+For the animation between the different activities https://codinginflow.com/tutorials/android/slide-animation-between-activities is used.
