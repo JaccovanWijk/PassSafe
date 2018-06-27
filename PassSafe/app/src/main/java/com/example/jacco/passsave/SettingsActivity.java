@@ -41,6 +41,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
     public String newPassword1;
     public String newPassword2;
     public String key;
+    public String inputKey;
     public FirebaseUser user;
     public Context context = this;
     public String givenPassword;
@@ -117,91 +118,30 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
     }
     @Override
     public void gotKey(String aKey) {
-//        key = aKey;
-//
-//        // Create popup menu
-//        LayoutInflater li = LayoutInflater.from(this);
-//        View promptsView = li.inflate(R.layout.prompts2, null);
-//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-//        // set prompts.xml to alertdialog builder
-//        alertDialogBuilder.setView(promptsView);
-//        final EditText userInput = (EditText) promptsView.findViewById(R.id.key);
-//        // set dialog message
-//        alertDialogBuilder
-//                .setCancelable(false)
-//                .setPositiveButton("OK",
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog,int id) {
-//                                String inputKey = userInput.getText().toString();
-//
-//                                // Check if input is correct
-//                                checkKey(inputKey);
-//                            }
-//                        })
-//                .setNegativeButton("Cancel",
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog,int id) {
-//                                dialog.cancel();
-//                            }
-//                        });
-//        // create alert dialog
-//        AlertDialog alertDialog = alertDialogBuilder.create();
-//        // show it
-//        alertDialog.show();
+        key = aKey;
+        inputKey = AES.encrypt(inputKey, password);
 
+        if (key.equals(inputKey)) {
+            // Popup with final check
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage("Changing your password will delete all your data! Are you sure?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Delete item
+                            changePassword();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Cancel
+                        }
+                    });
+            builder.show();
+        } else {
+            messageUser("Wrong Key!");
+        }
 
     }
-//    @Override
-//    public void changedPassword(String message) {
-//        messageUser(message);
-//
-//        // Store new password
-//        storePassword(newPassword1);
-//
-//        // Change password in firebaseAuth
-//        user.updatePassword(newPassword1)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if (task.isSuccessful()) {
-//                            Log.d("Change", "User password updated.");
-//                        }
-//                    }
-//                });
-//
-//        messageUser("Password changed!");
-//
-//        EditText oldPasswordText = findViewById(R.id.oldPassword);
-//        EditText newPassword1Text = findViewById(R.id.newPassword1);
-//        EditText newPassword2Text = findViewById(R.id.newPassword2);
-//
-//        oldPasswordText.setText("");
-//        newPassword1Text.setText("");
-//        newPassword2Text.setText("");
-//    }
-
-    // Check if right key is inputted
-//    public void checkKey(String inputKey) {
-//
-//        if (key.equals(AES.encrypt(inputKey, password))) {
-//
-//            // Call firebasefunction to change encryption
-//            FirebaseHelper helper = new FirebaseHelper(this);
-//            helper.changePassword(this ,password, newPassword1);
-//        } else {
-//
-//            // Reset EditTexts
-//            EditText oldPasswordText = findViewById(R.id.oldPassword);
-//            EditText newPassword1Text = findViewById(R.id.newPassword1);
-//            EditText newPassword2Text = findViewById(R.id.newPassword2);
-//            oldPasswordText.setText("");
-//            newPassword1Text.setText("");
-//            newPassword2Text.setText("");
-//
-//            messageUser("Wrong key!");
-//        }
-////        }
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -272,23 +212,9 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
                     .setPositiveButton("OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,int id) {
-                                    String inputKey = userInput.getText().toString();
+                                    inputKey = userInput.getText().toString();
 
-                                    // Popup with final check
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                                    builder.setMessage("Changing your password will delete all your data! Are you sure?")
-                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    // Delete item
-                                                    changePassword();
-                                                }
-                                            })
-                                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    // Don't delete
-                                                }
-                                            });
-                                    builder.show();
+                                    loadKey();
 
                                 }
                             })
@@ -304,6 +230,11 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
             alertDialog.show();
 
         }
+    }
+
+    public void loadKey() {
+        FirebaseHelper helper = new FirebaseHelper(this);
+        helper.getKey(this);
     }
 
     public void changePassword() {

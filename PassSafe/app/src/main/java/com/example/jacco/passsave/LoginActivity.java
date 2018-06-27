@@ -28,7 +28,7 @@ import java.io.FileOutputStream;
 
 /*
 * TODO MAKE UP MORE QUESTIONS
-* TODO https://codinginflow.com/tutorials/android/slide-animation-between-activities
+*  https://codinginflow.com/tutorials/android/slide-animation-between-activities
 */
 
 public class LoginActivity extends AppCompatActivity {
