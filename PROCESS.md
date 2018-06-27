@@ -39,3 +39,5 @@ Last few days have been trying to fix the problem I had. First I tried my best t
 
 # Day 14 27 - 06 - 2018
 Last try to fix the bugs, otherwise I'll ditch the idea. It would be a shame but if it's not working I can't let it in.
+
+I decided to skip half of the original plan for changing passwords. It is now possible to change your password, but changing the encryption isn't. Therefore you'll lose all your stored data if you change your password. 
