@@ -41,8 +41,13 @@ Reading from firebase goes as follows:
 
 # PassSafe
 Jacco van Wijk
+
 Programmeerproject
+
 Minor Programmeren 2018
 
-# The App
+
+## The App
 PassSafe is an app that can store your passwords in an online database, so you can acces them from any device. This way you don't have to remember all of your passwords and you can make them harder to crack. All personal information is saved encrypted using a personal encryptionkey. You'll also recieve an activationkey, which is another step to make your account extra secure. It's possible to add accounts, overlook all of your accounts, see account details, and edit your profile. You can also generate a random password for your account. 
+
+## 
