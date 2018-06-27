@@ -33,3 +33,9 @@ I'm still stuck at the same point as yesterday. I can't find the source of my pr
 
 # Day 9 20 - 06 - 2018
 Third day in a row on this problem. I fixed some minor things that I encountered while searching while searching for the isue. I determined that the problem must be with dublicate names, because the answer of a question is overwritten without my consent. 
+
+# Day 11-13 
+Last few days have been trying to fix the problem I had. First I tried my best to find the problem in the excisting code, but yesterday I decided to start from scratch and make a new helper. This is a less efficient way but if it'll work I'll be very happy. The only things i like to still add are the password request and changing the password. Both need the changing encryption code that i'm struggling with. 
+
+# Day 14 27 - 06 - 2018
+Last try to fix the bugs, otherwise I'll ditch the idea. It would be a shame but if it's not working I can't let it in.
