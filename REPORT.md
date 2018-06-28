@@ -62,4 +62,4 @@ After almost four days continuously trying to debug I decided to make a seperate
 ## Decisions
 My biggest change from my original ide is the *SettingsActivity*. Adding a question is a small feature that I thought be a good addision, but changing the password was a important feature in my mind. I'm a bit disapointed that I couldn't find the bug in the helper for changing the passwords. I think it was a good decision to ditch it though. I even wish I would have done it sooner, because I wasted a lot of time on it. 
 
-Besides that I think of my initial 
+Besides that I think that my original idea is not far from my final version. 
