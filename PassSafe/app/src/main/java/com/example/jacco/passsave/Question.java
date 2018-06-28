@@ -1,7 +1,7 @@
 package com.example.jacco.passsave;
 
-/**
- * Created by Jacco on 7-6-2018.
+/*
+ Model class for Question object.
  */
 
 public class Question {

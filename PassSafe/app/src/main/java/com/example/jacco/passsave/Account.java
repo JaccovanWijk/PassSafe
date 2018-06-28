@@ -2,8 +2,8 @@ package com.example.jacco.passsave;
 
 import java.io.Serializable;
 
-/**
- * Created by Jacco on 7-6-2018.
+/*
+ Model class for Account object.
  */
 
 public class Account implements Serializable{

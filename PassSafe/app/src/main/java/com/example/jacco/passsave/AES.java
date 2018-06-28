@@ -1,11 +1,5 @@
 package com.example.jacco.passsave;
 
-/**
- * Created by Jacco on 6-6-2018.
- *
- */
-
-import android.util.*;
 import android.util.Base64;
 
 import java.io.UnsupportedEncodingException;
@@ -17,13 +11,14 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- Aes encryption
+ Aes encryption inspired by https://aesencryption.net/.
  */
 
 public class AES {
 
     private static SecretKeySpec secretKey ;
 
+    // Set key for encryption
     public static void setKey(String myKey){
 
         MessageDigest sha = null;
@@ -59,6 +54,7 @@ public class AES {
         }
         catch (Exception e)
         {
+            // If encrypting doesn't work, return an empty string
             System.out.println("Error while encrypting: "+e.toString());
             return "";
         }

@@ -1,36 +1,22 @@
 package com.example.jacco.passsave;
-
-import android.content.Context;
+/*
+This activity displays a question which can be answered. It has a filled-in mode and a not-filled-in
+mode. Not-filled-in mode lets a user upload a question to firebase.Filled-in mode checks if the
+given answer corresponds to the given answer when the user uploaded the question.
+ */
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.io.FileInputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -55,29 +41,31 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         account = (Account) intent.getSerializableExtra("account");
 
         readPassword();
-
         foundQuestions = new ArrayList<>();
 
         if (filledIn) {
-            FirebaseHelper helper = new FirebaseHelper(this);
+            // Load in Questions
+            FirebaseHelper helper = new FirebaseHelper();
             helper.getQuestions(this);
         } else {
+            // Pick a random question and display it
             int idx = new Random().nextInt(allQuestions.length);
             String random = allQuestions[idx];
-
-            System.out.println(random);
-
             TextView textView = findViewById(R.id.question);
             textView.setText(random);
         }
 
     }
 
+    /*
+    Check questions that you received and display it.
+     */
     @Override
     public void gotQuestions(ArrayList<Question> questions) {
 
         foundQuestions = questions;
 
+        // Check which questions haven't been used
         ArrayList<String> usedQuestions = new ArrayList<>();
         for (Question aQuestion : questions) {
             usedQuestions.add(aQuestion.getQuestion());
@@ -94,6 +82,7 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
         } else {
 
+            // Pick a random filled in question
             int idx = new Random().nextInt(usedQuestions.size());
             String random = usedQuestions.get(idx);
 
@@ -125,34 +114,31 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
         Log.e("ERROR", message);
     }
 
+    /*
+    Listen for submit button and check the given answer. Post it to Firebase if needed.
+     */
     public void submitClicked(View view) {
 
         TextView textView = findViewById(R.id.question);
         String question = textView.getText().toString();
-
         EditText answerText = findViewById(R.id.answer);
         String givenAnswer = answerText.getText().toString();
 
         if (givenAnswer.length() == 0) {
             messageUser("Answer can't be empty!");
-
         } else {
-
             if (filledIn) {
 
+                // Find answer for chosen question
                 for (Question aQuestion : foundQuestions) {
                     if (aQuestion.getQuestion().equals(question)) {
                         answer = aQuestion.getAnswer();
                     }
                 }
 
-                Log.d("answers","[" + givenAnswer + "],[" + answer + "]");
-
-//                answer = AES.decrypt(answer, password);
                 givenAnswer = AES.encrypt(givenAnswer, password);
 
                 //TODO SOMETHIMES HE POSTS THE PASSWORD AS ANSWER
-                Log.d("answers","[" + givenAnswer + "],[" + answer + "]");
 
                 if (givenAnswer.equals(answer)) {
 
@@ -169,17 +155,12 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
             } else {
 
-
-                Log.d("answer", "[" + givenAnswer + "]");
-
                 givenAnswer = givenAnswer.replace("\n", "");
                 givenAnswer = AES.encrypt(givenAnswer, password);
-
-                Log.d("answer", "[" + givenAnswer + "]");
-
                 Question mainQuestion = new Question(question, givenAnswer);
 
-                FirebaseHelper helper = new FirebaseHelper(this);
+                // Upload new question
+                FirebaseHelper helper = new FirebaseHelper();
                 helper.addQuestion(mainQuestion);
 
                 Intent intent = new Intent(QuestionActivity.this, LoginActivity.class);

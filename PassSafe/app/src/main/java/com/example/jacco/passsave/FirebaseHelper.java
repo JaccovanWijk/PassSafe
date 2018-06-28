@@ -2,7 +2,6 @@ package com.example.jacco.passsave;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -10,28 +9,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-/**
- * Created by Jacco on 6-6-2018.
+/*
+ Helper for the Firebase realtime database.
  */
 
 public class FirebaseHelper extends AES{
-
-    public FirebaseHelper() {
-    }
 
     public interface CallBack {
         void gotQuestions(ArrayList<Question> questions);
@@ -40,20 +29,14 @@ public class FirebaseHelper extends AES{
         void gotError(String message);
     }
 
-    private Context context;
     private CallBack delegate;
     private DatabaseReference database;
-    private DatabaseReference userDatabase;
     public FirebaseUser user;
     public String userId;
     public ArrayList<Account> accounts;
     public ArrayList<Question> questions;
-    public String key;
-    public String oldPassword;
-    public String newPassword;
 
-    public FirebaseHelper(Context context) {
-        this.context = context;
+    public FirebaseHelper() {
 
         FirebaseDatabase firebase = FirebaseDatabase.getInstance();
 
@@ -62,11 +45,12 @@ public class FirebaseHelper extends AES{
             userId = user.getUid();
         }
 
+        // Set reference to userId
         database = firebase.getReference(userId);
 
     }
 
-    // Post question to firebase
+    // Post question to Firebase
     public void addQuestion(Question question) {
 
         DatabaseReference ref = database.child("Questions").push();
@@ -99,13 +83,13 @@ public class FirebaseHelper extends AES{
         });
     }
 
-    // Post account to firebase
+    // Post account to Firebase
     public void addAccount(Account account) {
         DatabaseReference ref = database.child("Accounts").push();
         ref.setValue(account);
     }
 
-    // Load in accounts from firebase and return them
+    // Load in accounts from Firebase and return them
     public void getAccounts(CallBack activity) {
 
         delegate = activity;
@@ -129,7 +113,7 @@ public class FirebaseHelper extends AES{
         });
     }
 
-    // Load in key from firebase and return it
+    // Load in key from Firebase and return it
     public void getKey(CallBack activity) {
 
         delegate = activity;
@@ -137,7 +121,7 @@ public class FirebaseHelper extends AES{
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                key = "";
+                String key = "";
 
                 for (DataSnapshot child : dataSnapshot.child("Key").getChildren()) {
                     key = child.getValue(String.class);
@@ -153,8 +137,8 @@ public class FirebaseHelper extends AES{
         });
     }
 
+    // Upload key to Firebase
     public void addKey(String key, String password) {
-        // Upload key
         DatabaseReference ref = database.child("Key").push();
         ref.setValue(AES.encrypt(key,password));
     }

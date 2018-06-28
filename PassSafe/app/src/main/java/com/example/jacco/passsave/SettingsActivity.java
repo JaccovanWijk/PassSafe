@@ -1,10 +1,11 @@
 package com.example.jacco.passsave;
+/*
 
+ */
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -20,8 +21,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -35,12 +34,8 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
     public String[] allQuestions = {"What is your fathers first name?", "What is your mothers first name?",
                                     "What was your first pets name?", "Which city/town were you born in?"};
     public ArrayList<Question> questions;
-    public String username;
     public String password;
-    public String oldPassword;
     public String newPassword1;
-    public String newPassword2;
-    public String key;
     public String inputKey;
     public FirebaseUser user;
     public Context context = this;
@@ -58,6 +53,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        String username = "";
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             username = user.getEmail();
@@ -71,7 +67,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         TextView usernameText = findViewById(R.id.username);
         usernameText.setText(username);
 
-        FirebaseHelper helper = new FirebaseHelper(this);
+        FirebaseHelper helper = new FirebaseHelper();
         helper.getQuestions(this);
     }
 
@@ -118,7 +114,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
     }
     @Override
     public void gotKey(String aKey) {
-        key = aKey;
+        String key = aKey;
         inputKey = AES.encrypt(inputKey, password);
 
         if (key.equals(inputKey)) {
@@ -175,9 +171,9 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         EditText oldPasswordText = findViewById(R.id.oldPassword);
         EditText newPassword1Text = findViewById(R.id.newPassword1);
         EditText newPassword2Text = findViewById(R.id.newPassword2);
-        oldPassword = oldPasswordText.getText().toString();
+        String oldPassword = oldPasswordText.getText().toString();
         newPassword1 = newPassword1Text.getText().toString();
-        newPassword2 = newPassword2Text.getText().toString();
+        String newPassword2 = newPassword2Text.getText().toString();
 
         // Encrypt password to compare
         byte[] bytesOldPassword = Base64.encode(oldPassword.getBytes(), Base64.DEFAULT);
@@ -233,13 +229,13 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
     }
 
     public void loadKey() {
-        FirebaseHelper helper = new FirebaseHelper(this);
+        FirebaseHelper helper = new FirebaseHelper();
         helper.getKey(this);
     }
 
     public void changePassword() {
 
-        FirebaseHelper helper = new FirebaseHelper(this);
+        FirebaseHelper helper = new FirebaseHelper();
         helper.changePassword(newPassword1);
 
         String key = createKey();
@@ -333,7 +329,7 @@ public class SettingsActivity extends AppCompatActivity implements FirebaseHelpe
         if (password.equals(encryptedPassword)) {
             questions.add(newQuestion);
 
-            FirebaseHelper helper = new FirebaseHelper(this);
+            FirebaseHelper helper = new FirebaseHelper();
             helper.addQuestion(newQuestion);
 
             messageUser("Question added!");

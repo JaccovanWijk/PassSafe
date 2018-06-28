@@ -1,10 +1,11 @@
 package com.example.jacco.passsave;
-
+/*
+This activity displays the username and password of a selected account.
+ */
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,8 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -27,8 +26,6 @@ public class PasswordActivity extends AppCompatActivity {
     public String username;
     public String accountPassword;
     public String password;
-    public TextView usernameText;
-    public TextView passwordText;
     public FirebaseAuth mAuth;
 
     @Override
@@ -42,19 +39,17 @@ public class PasswordActivity extends AppCompatActivity {
         readPassword();
         mAuth = FirebaseAuth.getInstance();
 
-        usernameText = findViewById(R.id.username);
-        passwordText = findViewById(R.id.password);
-
-        System.out.println(AES.decrypt(account.getPassword(), password));
-
+        TextView usernameText = findViewById(R.id.username);
+        TextView passwordText = findViewById(R.id.password);
         username = AES.decrypt(account.getUsername(), password);
         accountPassword = AES.decrypt(account.getPassword(), password);
-
         usernameText.setText(username);
         passwordText.setText(accountPassword);
     }
 
-    // Add menu
+    /*
+     Add option menu.
+      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -123,12 +118,14 @@ public class PasswordActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
     }
 
+    /*
+    Add selected string to clipboard.
+     */
     public void copyUsernameClicked(View view) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Username", username);
         clipboard.setPrimaryClip(clip);
     }
-
     public void copyPasswordClicked(View view) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Password", accountPassword);

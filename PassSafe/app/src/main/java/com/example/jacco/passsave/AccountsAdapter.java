@@ -14,8 +14,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Jacco on 5-6-2018.
+/*
+ Adapter for listview in AccountsActivity.
  */
 
 public class AccountsAdapter extends ArrayAdapter<Account>{

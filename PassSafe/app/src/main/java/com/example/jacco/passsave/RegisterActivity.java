@@ -22,11 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.Random;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -117,7 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
                                             encodedPassword = encodedPassword.replace("\n",
                                                     "").replace("\r", "");
 
-                                            FirebaseHelper helper = new FirebaseHelper(context);
+                                            FirebaseHelper helper = new FirebaseHelper();
                                             helper.addKey(key, encodedPassword);
 
                                             Intent intent = new Intent(RegisterActivity

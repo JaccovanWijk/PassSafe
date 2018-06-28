@@ -1,5 +1,8 @@
 package com.example.jacco.passsave;
-
+/*
+This activity takes the input from the user and posts it (encrypted) to the Firebase. It's also able
+to generate a random password.
+ */
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Random;
-//TODO ZET BUTTON GOED IN LANDSCAPE MODE
+
 public class NewAccountActivity extends AppCompatActivity {
 
     int[] ids = {R.id.account, R.id.username, R.id.password};
@@ -46,7 +49,7 @@ public class NewAccountActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
     }
 
-    // add menu
+    // add option menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -74,16 +77,18 @@ public class NewAccountActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+    Listener for accept button. Checks if the input is correct. Post is to Firebase if it is.
+     */
     public void acceptButtonClicked(View view) {
+
+        // Load in input
         EditText accountText = findViewById(ids[0]);
         EditText usernameText = findViewById(ids[1]);
         EditText passwordText = findViewById(ids[2]);
-
         String account = accountText.getText().toString();
         String newPassword = passwordText.getText().toString();
         String newUsername = usernameText.getText().toString();
-
-        //TODO CHECK OF HIJ ALLES WEL ACCEPTEERT
 
         if (account.length() == 0 || newUsername.length() == 0 || newPassword.length() == 0) {
             Log.d("error", "Something is empty");
@@ -93,12 +98,11 @@ public class NewAccountActivity extends AppCompatActivity {
         } else {
 
             Account newAccount = new Account(account, newUsername, newPassword);
-
             newAccount.setAccount(account);
             newAccount.setUsername(AES.encrypt(newUsername,password));
             newAccount.setPassword(AES.encrypt(newPassword, password));
 
-            FirebaseHelper helper = new FirebaseHelper(this);
+            FirebaseHelper helper = new FirebaseHelper();
             helper.addAccount(newAccount);
 
             Intent intent = new Intent(NewAccountActivity.this, AccountsActivity.class);
@@ -109,8 +113,11 @@ public class NewAccountActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    Generate a random password.
+     */
     public void randomPasswordClicked(View view) {
-        //TODO WAAROM WERKT ENCRIPTIE NIET MET RANDOM WACHTWOORD
+
         EditText passwordText = findViewById(ids[2]);
         String randomPassword = "";
 
@@ -124,6 +131,9 @@ public class NewAccountActivity extends AppCompatActivity {
         passwordText.setText(aPassword);
     }
 
+    /*
+    Listen for visibilitycheckbox and change it.
+     */
     public void visibilityClicked(View view) {
 
         EditText passwordText = findViewById(ids[2]);
