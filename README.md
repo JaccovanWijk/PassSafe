@@ -52,7 +52,6 @@ Login Activity            |  Register Activity       |   Question Activity    | 
 :------------------------:|:------------------------:|:----------------------:|:--------------------:|
 ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |  ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |
 Password Activity         |  New Account Activity    |   Settings Activity 1  |  Settings Activity 2 |
-:------------------------:|:------------------------:|:----------------------:|:--------------------:|
 ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |  ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |
   
 ## Sources
