@@ -40,6 +40,9 @@ Reading from firebase goes as follows:
 * Decrypting the password with [AES encryption](https://aesencryption.net/).
 
 # PassSafe
+
+![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/PasswordActivity.png)
+
 Jacco van Wijk  
 Programmeerproject  
 Minor Programmeren 2018  
