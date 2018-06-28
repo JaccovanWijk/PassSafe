@@ -9,13 +9,13 @@ The app consists of seven activities, one helper class and two model classes for
 #### LoginActivity
 The user is able to log in using the Firebase authentication. It checks if the input is correct, i.e. not empty, and checks with Firebase if the log in is legal. The user can also be redirected to the *RegisterActivity* by using the "Register" button. If the login is succesful the user will be directed to the *AccountsActivity*. 
 #### RegisterActivity
-In this activity the user is able to register an account using the Firebase authentication. It checks if the input will be allowed by Firebase and makes an account if everything is fine. It also send the user an activationmail so he can verify his Firebase authentication account. Finaly it creates an activationkey for the user, which he uploads encrypted to the Firebase realtime database. The user will be directed to the *QuestionActivity* after a succesful registration. 
+In this activity the user is able to register an account using the Firebase authentication. It checks if the input will be allowed by Firebase and makes an account if everything is fine. It also send the user an activationmail so he can verify his Firebase account. Finaly it creates an activationkey for the user, which he uploads encrypted to the Firebase realtime database. The user will be directed to the *QuestionActivity* after a succesful registration. 
 #### QuestionsActivity
 This activity consists of two main functionalities:
-* If the user is registering and has to provide an answer for a random question, then this activity will display a random question and display it. If the user answers it in a correct way, i.e. not empty, then the question and the encrypted answer will be added to an *Question* object, which is uploaded to the Firebase database. The user will return to the *LoginActivity* so he can acces his account.
-* If the user is requesting an account, then this activity will load in the questions he has filled in from the Firebase database, and display one of them. If the user inputs a answer, the answer will be checked. If it's correct, then the user will be directed to the *PasswordActivity*, where the accountdetails are displayed.
+* If the user is registering and has to provide an answer for a random question, then this activity will display a random question and display it. If the user answers it in a correct way, i.e. not empty, then the question and the encrypted answer will be added to a *Question* object, which is uploaded to the Firebase database. The user will return to the *LoginActivity* so he can acces his account.
+* If the user is requesting an account, then this activity will load in the questions he has filled in from the Firebase database, and display one of them. If the user inputs an answer, the answer will be checked. If it's correct, then the user will be directed to the *PasswordActivity*, where the accountdetails are displayed.
 #### AccountsActiviy
-If its the first time a user opens this activity it wil mostly be empty. This is because the user has not added any accounts yet. Clicking the addbutton will direct the user to the *NewAccountActivity*. If the user has accounts displayed he/she is able to click them. The user will be directed to the *QuestionActivity*.
+If its the first time a user opens this activity it wil mostly be empty. This is because the user has not added any accounts yet. Clicking the addbutton will direct the user to the *NewAccountActivity*. If the user has accounts displayed he is able to click them. The user will be directed to the *QuestionActivity*.
 #### PasswordActivity
 After answering the question correctly the accountdetails will be showed here. The activity also has two buttons that can copy the username or password respectifly. 
 #### NewAccountActivity
@@ -23,7 +23,7 @@ The user will be uploading the accounts in this activity. It's possible to give 
 #### SettingsActivity
 In almost all of the other activities ther is a optionmenu displayed in the top-right corner. This will give the options "Log Out" and "Settings". Clicking the latter one will direct the user to this activity, where you have two options:
 * Changing the password of your account, which will delete all of your data unfortunately. More details about this later.
-* Adding a question, where the user can choose one of the questions he/she has not answered yet. If they provide the right password, the question will be added to the Firebase database, just like the second functionality of the *QuestionActivity*. 
+* Adding a question, where the user can choose one of the questions he has not answered yet. If they provide the right password, the question will be added to the Firebase database, just like the second functionality of the *QuestionActivity*. 
 ### Helper Class
 #### FirebaseHelper
 In all of the activities the link with Firebase authentication is locally managed. Reading and writing to the Firebase database is managed with this helper. It uses CallBack to send back the data it gets from Firebase. 
