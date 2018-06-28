@@ -1,7 +1,7 @@
 package com.example.jacco.passsave;
 /*
-This activity is the log in screen. you can navigate to the registerscreen, ask for a new password,
-or just log in. It saves the hashed password so it can be used to encrypt and decrypt data.
+This activity is the log in screen. you can navigate to the registerscreen or just log in.
+It saves the hashed password so it can be used to encrypt and decrypt data.
  */
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +28,6 @@ import java.io.FileOutputStream;
 
 /*
 * TODO MAKE UP MORE QUESTIONS
-*  https://codinginflow.com/tutorials/android/slide-animation-between-activities
 */
 
 public class LoginActivity extends AppCompatActivity {
@@ -44,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Set FirebaseAuth reference
         mAuth = FirebaseAuth.getInstance();
 
         // Reading from SharedPreferences
@@ -55,7 +53,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    // Create Register button at top
+    /*
+    Create Register button at top.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -166,6 +166,9 @@ public class LoginActivity extends AppCompatActivity {
         passwordText.setText("");
     }
 
+    /*
+    Create a Toast with a given message.
+     */
     public void messageUser(String content) {
         Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }

@@ -1,6 +1,7 @@
 package com.example.jacco.passsave;
 /*
-This activity makes a new user.
+This activity makes a new user. It registers the user for the Firebase authentication and it
+creates a activationkey for the user.
  */
 import android.app.AlertDialog;
 import android.content.Context;

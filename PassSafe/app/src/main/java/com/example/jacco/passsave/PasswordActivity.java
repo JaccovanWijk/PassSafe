@@ -50,8 +50,8 @@ public class PasswordActivity extends AppCompatActivity {
         username = AES.decrypt(account.getUsername(), password);
         accountPassword = AES.decrypt(account.getPassword(), password);
 
-        usernameText.setText("Your username is: " + username);
-        passwordText.setText("Your password is: " + accountPassword);
+        usernameText.setText(username);
+        passwordText.setText(accountPassword);
     }
 
     // Add menu
