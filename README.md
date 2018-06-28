@@ -31,3 +31,6 @@ For the encryption the app uses a altered version of this [AES encryption](https
 
 ### Animation
 For the animation between the different activities https://codinginflow.com/tutorials/android/slide-animation-between-activities is used.
+
+## Copyright
+https://github.com/JaccovanWijk/PassSafe/blob/master/LICENSE
