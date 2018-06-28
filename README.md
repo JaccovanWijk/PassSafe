@@ -41,7 +41,7 @@ Reading from firebase goes as follows:
 
 # PassSafe
 
-![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/Lock_icon.png)
+![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/lock_icon.png)
 
 Jacco van Wijk  
 Programmeerproject  
