@@ -1,5 +1,8 @@
 package com.example.jacco.passsave;
-
+/*
+This activity shows all the accounts of a user in a listview. You can also add an account, which will
+direct you to the NewAccountActivity.
+ */
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -75,7 +78,7 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
         helper.getAccounts(this);
     }
 
-    // Add menu
+    // Add option menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -86,12 +89,12 @@ public class AccountsActivity extends AppCompatActivity implements FirebaseHelpe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.LogOut:
-                //TODO LOG OUT
                 Intent intent = new Intent(AccountsActivity.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
 
+                // Log out user in firebase
                 mAuth.signOut();
 
                 finish();
