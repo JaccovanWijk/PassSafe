@@ -17,16 +17,19 @@ This activity consists of two main functionalities:
 #### AccountsActiviy
 If its the first time a user opens this activity it wil mostly be empty. This is because the user has not added any accounts yet. Clicking the addbutton will direct the user to the *NewAccountActivity*. If the user has accounts displayed he is able to click them. The user will be directed to the *QuestionActivity*.
 #### PasswordActivity
-After answering the question correctly the accountdetails will be showed here. The activity also has two buttons that can copy the username or password respectifly. 
+After answering the question correctly the accountdetails will be showed here. The activity also has two buttons that can copy the username or password respectively. 
 #### NewAccountActivity
-The user will be uploading the accounts in this activity. It's possible to give the account an accounttype, an username and a password. The password can also be generated randomly. After pressing the acceptbutton the accounttype, encrypted username and enncrypted password will be added to a *Account* object, which is uploaded to the Firebase database. The user will be directed to the *AccountsActivity*, where the just uploaded account will be added. 
+The user will be uploading the accounts in this activity. It's possible to give the account an accounttype, a username and a password. The password can also be generated randomly. After pressing the acceptbutton, the accounttype, encrypted username and enncrypted password will be added to an *Account* object, which is uploaded to the Firebase database. The user will be directed to the *AccountsActivity*, where the just uploaded account will be added. 
 #### SettingsActivity
-In almost all of the other activities ther is a optionmenu displayed in the top-right corner. This will give the options "Log Out" and "Settings". Clicking the latter one will direct the user to this activity, where you have two options:
+In almost all of the other activities there is an optionmenu displayed in the top-right corner. This will give the options "Log Out" and "Settings". Clicking the latter one will direct the user to this activity, where you have two options:
 * Changing the password of your account, which will delete all of your data unfortunately. More details about this later.
 * Adding a question, where the user can choose one of the questions he has not answered yet. If they provide the right password, the question will be added to the Firebase database, just like the second functionality of the *QuestionActivity*. 
 ### Helper Class
 #### FirebaseHelper
-In all of the activities the link with Firebase authentication is locally managed. Reading and writing to the Firebase database is managed with this helper. It uses CallBack to send back the data it gets from Firebase. 
+In all of the activities the link with Firebase authentication is locally managed. Reading and writing to the Firebase database is managed with this helper. It uses CallBack to send back the data it gets from Firebase. It's able to upload and download the following things:
+* The activationkey;
+* The questions;
+* The accounts.
 ### Model Classes
 The following two model classes are relatively easy, but they make it a lot easier to upload an download from the Firebase database.
 #### Account
@@ -55,4 +58,8 @@ This is also the case with manually changing the password in the settings. Right
 
 I tried a lot of things to make this work. Firstly I tried to expand my *FirebaseHelper* so it could download all data, decrypt en encrypt it, and then upload it again. For some reason I could not make this work. Not only was the error inconsistent, I also couldn't find what caused the error. Sometimes it uploaded some things that were not decryptable, sometimes it uploaded nothing and sometimes it went wrong with downloading. 
 
-After almost 4 days continuously trying to debug I decided to make a seperate helper called *ChangePasswordHelper*. I knew this was not the cleanest way, but if I managed to make it work i would be very happy. The helper can still be found in the commits, but i ditch it in the final version, because I wasn't able to make it work. It's unfortunate that I lost a week worth of time trying to implement this feature and not being able to do so, but all other functionalities do work. When I look back at it I should have ditch the idea a lot sooner, so I could perfect the other features and layout of the app.
+After almost four days continuously trying to debug I decided to make a seperate helper called *ChangePasswordHelper*. I knew this was not the cleanest way, but if I managed to make it work i would be very happy. The helper can still be found in the commits, but i ditch it in the final version, because I wasn't able to make it work. It's unfortunate that I lost a week worth of time trying to implement this feature and not being able to do so, but all other functionalities do work. When I look back at it I should have ditched the idea a lot sooner, so I could perfect the other features and layout of the app.
+## Decisions
+My biggest change from my original ide is the *SettingsActivity*. Adding a question is a small feature that I thought be a good addision, but changing the password was a important feature in my mind. I'm a bit disapointed that I couldn't find the bug in the helper for changing the passwords. I think it was a good decision to ditch it though. I even wish I would have done it sooner, because I wasted a lot of time on it. 
+
+Besides that I think of my initial 
