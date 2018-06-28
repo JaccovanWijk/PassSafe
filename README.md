@@ -32,3 +32,6 @@ For the animation between the different activities https://codinginflow.com/tuto
 
 ## Copyright
 https://github.com/JaccovanWijk/PassSafe/blob/master/LICENSE
+
+## Demo
+[Demo video](https://youtu.be/5Jpe5htDZ_o)
