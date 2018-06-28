@@ -3,4 +3,6 @@ PassSafe is an app where people can store passwords and acces them from other de
 
 ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/AccountsActivity.png)
 
+
+<img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/AccountsActivity.png"width="200" height="400" />
 ##
