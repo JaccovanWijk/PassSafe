@@ -26,10 +26,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.io.FileOutputStream;
 
-/*
-* TODO MAKE UP MORE QUESTIONS
-*/
-
 public class LoginActivity extends AppCompatActivity {
 
     // initialise variables

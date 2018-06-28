@@ -138,8 +138,6 @@ public class QuestionActivity extends AppCompatActivity implements FirebaseHelpe
 
                 givenAnswer = AES.encrypt(givenAnswer, password);
 
-                //TODO SOMETHIMES HE POSTS THE PASSWORD AS ANSWER
-
                 if (givenAnswer.equals(answer)) {
 
                     Intent intent = new Intent(QuestionActivity.this, PasswordActivity.class);
