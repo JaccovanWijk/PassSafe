@@ -1,5 +1,5 @@
 # Report PassSafe
-PassSafe is an app where people can store passwords and acces them from other devices. The passwords are not only protected by passwords and encryptions, but also personal questions that a user has to fill in.
+PassSafe is an app where people can store passwords and acces them from other devices. The passwords are not only protected by passwords and encryptions, but also by personal questions that a user has to fill in.
 
 <img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/AccountsActivity.png" width="288" height="512" > 
 
@@ -7,9 +7,7 @@ PassSafe is an app where people can store passwords and acces them from other de
 The app consists of seven activities, one helper class and two model classes for objects.
 ### Activities
 #### LoginActivity
-The user is able to log in, surprisingly, using the Firebase authentication. The user can also be redirected to the *RegisterActivity*. If the login is succesful the user will be directed to the *AccountsActivity*. (This is implemented with the following functions:)
-(##### loginClicked
-This function listens for the button to be pressed so it can check the input. If the input checks out it checks with firebase if the username and password match. If that's the case then it will check if the e-mail is verified. If everything checks out the user will be directed to the *AccountsActivity* and the password will be stored in the background for later use in encrypting data. )
+The user is able to log in using the Firebase authentication. It checks if the input is correct, i.e. not empty, and checks with Firebase if the log in is legal. The user can also be redirected to the *RegisterActivity* by using the "Register" button. If the login is succesful the user will be directed to the *AccountsActivity*. 
 #### RegisterActivity
 In this activity the user is able to register an account using the Firebase authentication. It checks if the input will be allowed by Firebase and makes an account if everything is fine. It also send the user an activationmail so he can verify his Firebase authentication account. Finaly it creates an activationkey for the user, which he uploads encrypted to the Firebase realtime database. The user will be directed to the *QuestionActivity* after a succesful registration. 
 #### QuestionsActivity
@@ -28,4 +26,33 @@ In almost all of the other activities ther is a optionmenu displayed in the top-
 * Adding a question, where the user can choose one of the questions he/she has not answered yet. If they provide the right password, the question will be added to the Firebase database, just like the second functionality of the *QuestionActivity*. 
 ### Helper Class
 #### FirebaseHelper
-In all of the activities the link with Firebase authentication is locally managed. 
+In all of the activities the link with Firebase authentication is locally managed. Reading and writing to the Firebase database is managed with this helper. It uses CallBack to send back the data it gets from Firebase. 
+### Model Classes
+The following two model classes are relatively easy, but they make it a lot easier to upload an download from the Firebase database.
+#### Account
+An account object consists of three strings:
+* The accountname;
+* The username;
+* The password.
+#### Question
+A question object consists of two strings:
+* The question;
+* The answer.
+## Challenges
+This project provided me with it's fair share of problems. In the beginning it all went quite smoothly, I had a good idea of how I wanted the app to function, so making the structure was a few hours of work. In my first version I forgot to give the user an option to log out, so I implemeted this on a later note. 
+
+I liked the idea of having to answer a question before recieving your passwords. I thought it would be a little unnecessary to make two activities for this purpose, so I made two instances of the *QuestionsActivity*. 
+
+One of the harder parts was the encryption. I wanted the security to really be secure and not just look like it is. Because I store all data in the Firebase database I was thinking a lot about encrypting this data. The hard part is the way you recieve the data again, because you had to decrypt it again. This meant I had to use encryption with a key, but this key had to be unique for every user. I decided to use the hashed password that the user uses to log in to the app. This way not even I could acces the data of the users.
+
+
+#### The Big Problem
+I had one returning problem during this project. I encrypt the data in the Firebase database with the password of the user and therefore changing this password would make the decryption of the data impossible. This made two major plans for the app very hard. 
+
+I planned to have a way to retrieve your password of the app if you lost it. I wanted to use the activationkey to ask for a new password, but this meant that everything on the database had to be decrypted with the old password and encrypted with the new password. 
+
+This is also the case with manually changing the password in the settings. Right now I implemented it, but the user still loses the data.
+
+I tried a lot of things to make this work. Firstly I tried to expand my *FirebaseHelper* so it could download all data, decrypt en encrypt it, and then upload it again. For some reason I could not make this work. Not only was the error inconsistent, I also couldn't find what caused the error. Sometimes it uploaded some things that were not decryptable, sometimes it uploaded nothing and sometimes it went wrong with downloading. 
+
+After almost 4 days continuously trying to debug I decided to make a seperate helper called *ChangePasswordHelper*. I knew this was not the cleanest way, but if I managed to make it work i would be very happy. The helper can still be found in the commits, but i ditch it in the final version, because I wasn't able to make it work. It's unfortunate that I lost a week worth of time trying to implement this feature and not being able to do so, but all other functionalities do work. When I look back at it I should have ditch the idea a lot sooner, so I could perfect the other features and layout of the app.
