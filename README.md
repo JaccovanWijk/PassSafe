@@ -51,7 +51,9 @@ PassSafe is an app that can store your passwords in an online database, so you c
 Login Activity            |  Register Activity       |   Question Activity    |   Accounts Activity  |
 :------------------------:|:------------------------:|:----------------------:|:--------------------:|
 ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |  ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |
-
+Password Activity         |  New Account Activity    |   Settings Activity 1  |  Settings Activity 2 |
+:------------------------:|:------------------------:|:----------------------:|:--------------------:|
+![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |  ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png)  |
   
 ## Sources
 In this app accounts and storing data is managed with [Firebase](firebase.google.com). The authentication feature is used for logging in and the realtime database is used for storing the passwords, questions and the activationkeys. 
