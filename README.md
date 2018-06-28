@@ -18,8 +18,6 @@ Password Activity         |  New Account Activity    |   Settings Activity 1  | 
 :------------------------:|:------------------------:|:----------------------:|:--------------------:|
 ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/PasswordActivity.png)  |  ![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/NewAccountActivity.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/SettingsActivity1.png)  |![](https://github.com/JaccovanWijk/PassSafe/blob/master/doc/SettingsActivity2.png)  |
 
-<img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/LoginActivity.png" width="192" height="341" /> <img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/RegisterActivity.png" width="192" height="341" /> <img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/QuestionActivity.png" width="192" height="341" /> <img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/AccountsActivity.png" width="192" height="341" /> <img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/PasswordActivity.png" width="192" height="341" /> <img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/NewAccountActivity.png" width="192" height="341" /> <img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/SettingsActivity1.png" width="192" height="341" /> <img src="https://github.com/JaccovanWijk/PassSafe/blob/master/doc/SettingsActivity2.png" width="192" height="341" />
-
 ## Sources
 In this app accounts and storing data is managed with [Firebase](firebase.google.com). The authentication feature is used for logging in and the realtime database is used for storing the passwords, questions and the activationkeys. 
 
